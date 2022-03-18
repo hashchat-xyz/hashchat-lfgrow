@@ -14,7 +14,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (connection.status === "connected") {
-      router.push("/chat");
+      router.push("/Chat");
     }
   }, [connection]);
 
