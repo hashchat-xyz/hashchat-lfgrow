@@ -7,7 +7,6 @@ import { useConnection } from "@self.id/framework";
 
 export default function Connect() {
   const [connection, connect, disconnect] = useConnection();
-  console.log(connection);
 
   return (
     <div>

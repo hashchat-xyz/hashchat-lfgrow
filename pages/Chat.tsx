@@ -14,8 +14,12 @@ import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import Fab from "@mui/material/Fab";
 import SendIcon from "@mui/icons-material/Send";
-
+import { useConnection } from "@self.id/framework";
+import { useMultiAuth } from "@self.id/multiauth";
 export default function Chat() {
+  const [connection, connect, disconnect] = useConnection();
+  const [authState, authenticate] = useMultiAuth();
+
   return (
     <div>
       <Grid container item xs={12} component={Paper} padding={5}>
@@ -26,7 +30,11 @@ export default function Chat() {
           {/*Send Message button needs to open up a pop with the new contact*/}
           <Button variant="contained">Send Message</Button>
           {/*Wallet button needs to pull public address info and populate and abbrievated version.*/}
-          <Button variant="contained">0x73..7db4</Button>
+          <Button variant="contained">
+            {authState.status === "authenticated"
+              ? authState.auth.accountID.address
+              : null}
+          </Button>
         </Grid>
       </Grid>
       <Grid container padding={3}>
