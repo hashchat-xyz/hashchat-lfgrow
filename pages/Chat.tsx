@@ -14,21 +14,14 @@ import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import Fab from "@mui/material/Fab";
 import SendIcon from "@mui/icons-material/Send";
+import { useConnection } from "@self.id/framework";
+import { useMultiAuth } from "@self.id/multiauth";
+import Header from "../components/Header";
 
 export default function Chat() {
   return (
     <div>
-      <Grid container item xs={12} component={Paper} padding={5}>
-        <Grid item xs={6}>
-          <Typography variant="h4">Haschat</Typography>
-        </Grid>
-        <Grid item xs={6} textAlign="right">
-          {/*Send Message button needs to open up a pop with the new contact*/}
-          <Button variant="contained">Send Message</Button>
-          {/*Wallet button needs to pull public address info and populate and abbrievated version.*/}
-          <Button variant="contained">0x73..7db4</Button>
-        </Grid>
-      </Grid>
+      <Header />
       <Grid container padding={3}>
         <Grid item xs={3}>
           <Grid item xs={12} style={{ padding: "10px" }}>
