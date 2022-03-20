@@ -23,12 +23,8 @@
   },
   "devDependencies": {
     "@types/node": "^17.0.21",
-<<<<<<< Updated upstream
-    "@types/react": "^17.0.40",
-=======
     "@types/react": "^17.0.41",
     "@types/react-blockies": "^1.4.1",
->>>>>>> Stashed changes
     "eslint": "8.11.0",
     "eslint-config-next": "12.1.0",
     "typescript": "^4.6.2"
