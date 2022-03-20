@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import { useConnection } from "@self.id/framework";
 import { useMultiAuth } from "@self.id/multiauth";
+import Blockies from 'react-blockies';
 
 export default function Header() {
   const [connection, connect, disconnect] = useConnection();
@@ -18,17 +19,23 @@ export default function Header() {
         </Grid>
         <Grid item xs={6} textAlign="right">
           {connection.status === "connected" ? (
-            <Button
-              onClick={() => {
-                disconnect();
-              }}
-              variant="contained"
-              size="large"
-            >
+            <div>
+              <Button
+                onClick={() => {
+                  disconnect();
+                }}
+                variant="contained"
+                size="large"
+              >
+                {authState.status === "authenticated"
+                  ? authState.auth.accountID.address
+                  : null}
+              </Button>
               {authState.status === "authenticated"
-                ? authState.auth.accountID.address
-                : null}
-            </Button>
+                ? <Blockies seed={authState.auth.accountID.address} />
+                : null
+              }
+            </div>
           ) : (
             <Button
               disabled={connection.status === "connecting"}
