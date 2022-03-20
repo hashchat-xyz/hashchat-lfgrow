@@ -17,6 +17,11 @@ import SendIcon from "@mui/icons-material/Send";
 import { useConnection } from "@self.id/framework";
 import { useMultiAuth } from "@self.id/multiauth";
 import Header from "../components/Header";
+<<<<<<< Updated upstream
+=======
+import Threads from "../components/Threads";
+import Blockies from 'react-blockies';
+>>>>>>> Stashed changes
 
 export default function Chat() {
   return (
@@ -38,30 +43,44 @@ export default function Chat() {
             {/*List Item needs to populate the correct pulic address.*/}
             <ListItem button key="RemySharp">
               <ListItemIcon>
+<<<<<<< Updated upstream
                 <Avatar
                   alt="Remy Sharp"
                   src="https://material-ui.com/static/images/avatar/1.jpg"
                 />
+=======
+                <Blockies seed='0x862efbff8e2a634dbda85b461f4d1c41a557c46b' />
+>>>>>>> Stashed changes
               </ListItemIcon>
               <ListItemText primary="Ryan.eth">Ryan.eth</ListItemText>
             </ListItem>
             {/*List Item needs to populate the correct pulic address.*/}
             <ListItem button key="Alice">
+<<<<<<< Updated upstream
               <ListItemIcon>
                 <Avatar
                   alt="Alice"
                   src="https://material-ui.com/static/images/avatar/3.jpg"
                 />
+=======
+            <ListItemIcon>
+                <Blockies seed='0xcd2e72aebe2a203b84f46deec948e6465db51c75' />
+>>>>>>> Stashed changes
               </ListItemIcon>
               <ListItemText primary="Alice.eth">Alice.eth</ListItemText>
             </ListItem>
             {/*List Item needs to populate the correct pulic address.*/}
             <ListItem button key="CindyBaker">
+<<<<<<< Updated upstream
               <ListItemIcon>
                 <Avatar
                   alt="Cindy Baker"
                   src="https://material-ui.com/static/images/avatar/2.jpg"
                 />
+=======
+            <ListItemIcon>
+                <Blockies seed='0xB3E625228bE2D986Af0076aB8F75bA3318db26d1' />
+>>>>>>> Stashed changes
               </ListItemIcon>
               <ListItemText primary="Cindy.eth">Cindy.eth</ListItemText>
             </ListItem>
