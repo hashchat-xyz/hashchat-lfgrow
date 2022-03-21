@@ -40,7 +40,10 @@ export default function Chat() {
       <Header />
       {selfID.id ? (
         <Grid container padding={3}>
-          <ThreadList setSelectedThread={setSelectedThread}></ThreadList>
+          <ThreadList
+            selectedThread={selectedThread}
+            setSelectedThread={setSelectedThread}
+          ></ThreadList>
           <MessageList threadId={selectedThread}></MessageList>
         </Grid>
       ) : null}

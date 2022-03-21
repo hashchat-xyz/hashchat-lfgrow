@@ -34,6 +34,8 @@ export default function MessageList({ threadId }) {
   const [messages, setMessages] = useState([] as any[]);
 
   useEffect(() => {
+    setMessages([]);
+
     const readThread = async () => {
       if (threadId) {
         const litNodeClient = new LitJsSdk.LitNodeClient();

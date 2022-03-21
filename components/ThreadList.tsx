@@ -1,7 +1,7 @@
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
@@ -23,7 +23,7 @@ import { TileLoader } from "@glazed/tile-loader";
 
 const CHAIN = "polygon";
 
-export default function ThreadList({ setSelectedThread }) {
+export default function ThreadList({ selectedThread, setSelectedThread }) {
   const { account } = useWeb3React();
   const { selfID, ethProvider, web3Provider } = useSelfID();
   const [inbox, setInbox] = useState([] as any[]);
@@ -73,8 +73,8 @@ export default function ThreadList({ setSelectedThread }) {
       <Divider />
       <List>
         {inbox.map((thread, i) => (
-          <ListItem
-            button
+          <ListItemButton
+            selected={selectedThread === thread.threadId}
             key={i}
             onClick={() => {
               setSelectedThread(thread.threadId);
@@ -86,7 +86,7 @@ export default function ThreadList({ setSelectedThread }) {
             <ListItemText primary={thread.threadId.toString().slice(0, 10)}>
               {thread.from}
             </ListItemText>
-          </ListItem>
+          </ListItemButton>
         ))}
       </List>
     </Grid>
