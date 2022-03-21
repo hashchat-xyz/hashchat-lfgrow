@@ -19,14 +19,10 @@ import {
 import LitJsSdk from "lit-js-sdk";
 import { useWeb3React } from "@web3-react/core";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
-import {
-  AppendCollection,
-  Collection,
-} from "@cbj/ceramic-append-collection/dist/index.js";
 
 const CHAIN = "polygon";
 
-export default function ThreadList() {
+export default function ThreadList({ setSelectedThread }) {
   const { account } = useWeb3React();
   const { selfID, ethProvider, web3Provider } = useSelfID();
   const [inbox, setInbox] = useState([] as any[]);
@@ -47,42 +43,10 @@ export default function ThreadList() {
               selfID.client.ceramic,
               streamId
             );
-            // const litStreamContent = litStream.content as any;
-
-            // const symmetricKey: Uint8Array =
-            //   await litNodeClient.getEncryptionKey({
-            //     accessControlConditions:
-            //       litStreamContent.accessControlConditions,
-            //     toDecrypt: LitJsSdk.uint8arrayToString(
-            //       decodeb64(litStreamContent.encryptedSymmetricKey),
-            //       "base16"
-            //     ),
-            //     chain: CHAIN,
-            //     authSig,
-            //   });
-
-            // const streamIdContainer = await decryptMsg(
-            //   litStreamContent.encryptedStreamId,
-            //   symmetricKey
-            // );
-
-            // const collection = await AppendCollection.load(
-            //   selfID.client.ceramic,
-            //   streamIdContainer.threadStreamId
-            // );
-
-            // const encryptedMsgs = await collection.getFirstN(5);
-
-            // const cleartextMsgs = await Promise.all(
-            //   encryptedMsgs.map(async (item) => {
-            //     return await decryptMsg(item.value, symmetricKey);
-            //   })
-            // );
 
             return {
               threadId: streamId,
               from: litStream.controllers[0],
-              //   cleartextMsgs: cleartextMsgs,
             };
           })
         );
@@ -107,11 +71,19 @@ export default function ThreadList() {
       <Divider />
       <List>
         {inbox.map((thread, i) => (
-          <ListItem button key={i}>
+          <ListItem
+            button
+            key={i}
+            onClick={() => {
+              setSelectedThread(thread.threadId);
+            }}
+          >
             <ListItemIcon>
               <Blockies seed={thread.from} />
             </ListItemIcon>
-            <ListItemText primary={thread.from}>{thread.from}</ListItemText>
+            <ListItemText primary={thread.threadId.slice(0, 10)}>
+              {thread.from}
+            </ListItemText>
           </ListItem>
         ))}
       </List>
