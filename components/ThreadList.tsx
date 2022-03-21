@@ -23,7 +23,13 @@ import { TileLoader } from "@glazed/tile-loader";
 
 const CHAIN = "polygon";
 
-export default function ThreadList({ selectedThread, setSelectedThread }) {
+export default function ThreadList({
+  selectedThread,
+  setSelectedThread,
+}: {
+  selectedThread: any;
+  setSelectedThread: any;
+}) {
   const { account } = useWeb3React();
   const { selfID, ethProvider, web3Provider } = useSelfID();
   const [inbox, setInbox] = useState([] as any[]);

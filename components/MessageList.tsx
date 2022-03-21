@@ -28,7 +28,7 @@ import SendIcon from "@mui/icons-material/Send";
 
 const CHAIN = "polygon";
 
-export default function MessageList({ threadId }) {
+export default function MessageList({ threadId }: { threadId: string }) {
   const { account } = useWeb3React();
   const { selfID, ethProvider, web3Provider } = useSelfID();
   const [messages, setMessages] = useState([] as any[]);

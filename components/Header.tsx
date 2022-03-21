@@ -18,7 +18,7 @@ export default function Header() {
           <Typography variant="h4">Hashchat</Typography>
         </Grid>
         <Grid item xs={6} textAlign="right">
-          {active ? (
+          {active && account ? (
             <div>
               <Button
                 onClick={() => {

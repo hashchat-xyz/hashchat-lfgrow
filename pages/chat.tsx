@@ -27,7 +27,7 @@ export default function Chat() {
   const { active } = useWeb3React();
   const router = useRouter();
   const { selfID } = useSelfID();
-  const [selectedThread, setSelectedThread] = useState(null);
+  const [selectedThread, setSelectedThread] = useState("");
 
   useEffect(() => {
     if (!active) {
