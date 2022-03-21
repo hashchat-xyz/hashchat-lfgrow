@@ -42,11 +42,6 @@ export default function Connect() {
             Connect to Metamask
           </Button>
         </Grid>
-        <Grid item xs={12} textAlign="center">
-          <Button variant="contained" size="large">
-            WalletConnect
-          </Button>
-        </Grid>
       </Grid>
     </div>
   );
