@@ -95,10 +95,10 @@ export default function MessageList({ threadId }) {
                 ></ListItemText>
               </Grid>
               <Grid item xs={12}>
-                <ListItemText
+                {/* <ListItemText
                   style={{ display: "flex", justifyContent: "flex-end" }}
                   secondary="09:30"
-                ></ListItemText>
+                ></ListItemText> */}
               </Grid>
             </Grid>
           </ListItem>
