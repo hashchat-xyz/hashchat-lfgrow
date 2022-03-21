@@ -5,11 +5,11 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import { useConnection } from "@self.id/framework";
 import { useMultiAuth } from "@self.id/multiauth";
-import Blockies from 'react-blockies';
+import Blockies from "react-blockies";
+import { useWeb3React } from "@web3-react/core";
 
 export default function Header() {
-  const [connection, connect, disconnect] = useConnection();
-  const [authState, authenticate] = useMultiAuth();
+  const { active, account } = useWeb3React();
 
   return (
     <div>
@@ -18,29 +18,23 @@ export default function Header() {
           <Typography variant="h4">Hashchat</Typography>
         </Grid>
         <Grid item xs={6} textAlign="right">
-          {connection.status === "connected" ? (
+          {active ? (
             <div>
               <Button
                 onClick={() => {
-                  disconnect();
+                  // disconnect();
                 }}
                 variant="contained"
                 size="large"
               >
-                {authState.status === "authenticated"
-                  ? authState.auth.accountID.address
-                  : null}
+                {account}
               </Button>
-              {authState.status === "authenticated"
-                ? <Blockies seed={authState.auth.accountID.address} />
-                : null
-              }
+              <Blockies seed={account} />
             </div>
           ) : (
             <Button
-              disabled={connection.status === "connecting"}
               onClick={() => {
-                connect();
+                // connect();
               }}
               variant="contained"
               size="large"

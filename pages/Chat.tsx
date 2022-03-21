@@ -17,9 +17,21 @@ import SendIcon from "@mui/icons-material/Send";
 import { useConnection } from "@self.id/framework";
 import { useMultiAuth } from "@self.id/multiauth";
 import Header from "../components/Header";
-import Blockies from 'react-blockies';
+import Blockies from "react-blockies";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useWeb3React } from "@web3-react/core";
 
 export default function Chat() {
+  const { active } = useWeb3React();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!active) {
+      router.push("/");
+    }
+  }, [active]);
+
   return (
     <div>
       <Header />
@@ -39,21 +51,21 @@ export default function Chat() {
             {/*List Item needs to populate the correct pulic address.*/}
             <ListItem button key="RemySharp">
               <ListItemIcon>
-                <Blockies seed='0x862efbff8e2a634dbda85b461f4d1c41a557c46b' />
+                <Blockies seed="0x862efbff8e2a634dbda85b461f4d1c41a557c46b" />
               </ListItemIcon>
               <ListItemText primary="Ryan.eth">Ryan.eth</ListItemText>
             </ListItem>
             {/*List Item needs to populate the correct pulic address.*/}
             <ListItem button key="Alice">
-            <ListItemIcon>
-                <Blockies seed='0xcd2e72aebe2a203b84f46deec948e6465db51c75' />
+              <ListItemIcon>
+                <Blockies seed="0xcd2e72aebe2a203b84f46deec948e6465db51c75" />
               </ListItemIcon>
               <ListItemText primary="Alice.eth">Alice.eth</ListItemText>
             </ListItem>
             {/*List Item needs to populate the correct pulic address.*/}
             <ListItem button key="CindyBaker">
-            <ListItemIcon>
-                <Blockies seed='0xB3E625228bE2D986Af0076aB8F75bA3318db26d1' />
+              <ListItemIcon>
+                <Blockies seed="0xB3E625228bE2D986Af0076aB8F75bA3318db26d1" />
               </ListItemIcon>
               <ListItemText primary="Cindy.eth">Cindy.eth</ListItemText>
             </ListItem>

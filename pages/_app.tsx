@@ -1,13 +1,18 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
-import { Provider } from "@self.id/framework";
+import { Web3ReactProvider } from "@web3-react/core";
+import { Web3Provider } from "@ethersproject/providers";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function getLibrary(provider: any, connector: any) {
+  return new Web3Provider(provider);
+}
+
+function App({ Component, pageProps }: AppProps) {
   return (
-    <Provider client={{ ceramic: "testnet-clay" }}>
+    <Web3ReactProvider getLibrary={getLibrary}>
       <Component {...pageProps} />
-    </Provider>
+    </Web3ReactProvider>
   );
 }
 
-export default MyApp;
+export default App;
