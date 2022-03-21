@@ -19,6 +19,7 @@ import {
 import LitJsSdk from "lit-js-sdk";
 import { useWeb3React } from "@web3-react/core";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
+import { TileLoader } from "@glazed/tile-loader";
 
 const CHAIN = "polygon";
 
@@ -37,19 +38,20 @@ export default function ThreadList({ setSelectedThread }) {
 
         const _inbox = await getInbox(account);
 
-        const _inboxWithMsgs = await Promise.all(
-          _inbox.map(async (streamId) => {
-            const litStream = await TileDocument.load(
-              selfID.client.ceramic,
-              streamId
-            );
+        const loader = new TileLoader({ ceramic: selfID.client.ceramic });
 
-            return {
-              threadId: streamId,
-              from: litStream.controllers[0],
-            };
-          })
-        );
+        const _inboxWithMsgs = (
+          await Promise.all(
+            _inbox.map((streamId) => {
+              return loader.load(streamId);
+            })
+          )
+        ).map((stream) => {
+          return {
+            threadId: stream.id,
+            from: stream.controllers[0],
+          };
+        });
         setInbox(_inboxWithMsgs);
       }
     };
@@ -81,7 +83,7 @@ export default function ThreadList({ setSelectedThread }) {
             <ListItemIcon>
               <Blockies seed={thread.from} />
             </ListItemIcon>
-            <ListItemText primary={thread.threadId.slice(0, 10)}>
+            <ListItemText primary={thread.threadId.toString().slice(0, 10)}>
               {thread.from}
             </ListItemText>
           </ListItem>
