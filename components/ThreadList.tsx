@@ -8,8 +8,91 @@ import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import Blockies from "react-blockies";
 import { SelfID } from "@self.id/web";
+import { useSelfID } from "../src/hooks";
+import { useEffect, useState } from "react";
+import {
+  decodeb64,
+  decryptMsg,
+  generateLitAuthSig,
+  getInbox,
+} from "../src/utils";
+import LitJsSdk from "lit-js-sdk";
+import { useWeb3React } from "@web3-react/core";
+import { TileDocument } from "@ceramicnetwork/stream-tile";
+import {
+  AppendCollection,
+  Collection,
+} from "@cbj/ceramic-append-collection/dist/index.js";
 
-export default function ThreadList({ selfID }: { selfID: SelfID }) {
+const CHAIN = "polygon";
+
+export default function ThreadList() {
+  const { account } = useWeb3React();
+  const { selfID, ethProvider, web3Provider } = useSelfID();
+  const [inbox, setInbox] = useState([] as any[]);
+
+  useEffect(() => {
+    const readInbox = async () => {
+      if (selfID != null && selfID.client != null && account) {
+        const litNodeClient = new LitJsSdk.LitNodeClient();
+
+        const authSig = await generateLitAuthSig(web3Provider.provider);
+        await litNodeClient.connect();
+
+        const _inbox = await getInbox(account);
+
+        const _inboxWithMsgs = await Promise.all(
+          _inbox.map(async (streamId) => {
+            const litStream = await TileDocument.load(
+              selfID.client.ceramic,
+              streamId
+            );
+            // const litStreamContent = litStream.content as any;
+
+            // const symmetricKey: Uint8Array =
+            //   await litNodeClient.getEncryptionKey({
+            //     accessControlConditions:
+            //       litStreamContent.accessControlConditions,
+            //     toDecrypt: LitJsSdk.uint8arrayToString(
+            //       decodeb64(litStreamContent.encryptedSymmetricKey),
+            //       "base16"
+            //     ),
+            //     chain: CHAIN,
+            //     authSig,
+            //   });
+
+            // const streamIdContainer = await decryptMsg(
+            //   litStreamContent.encryptedStreamId,
+            //   symmetricKey
+            // );
+
+            // const collection = await AppendCollection.load(
+            //   selfID.client.ceramic,
+            //   streamIdContainer.threadStreamId
+            // );
+
+            // const encryptedMsgs = await collection.getFirstN(5);
+
+            // const cleartextMsgs = await Promise.all(
+            //   encryptedMsgs.map(async (item) => {
+            //     return await decryptMsg(item.value, symmetricKey);
+            //   })
+            // );
+
+            return {
+              threadId: streamId,
+              from: litStream.controllers[0],
+              //   cleartextMsgs: cleartextMsgs,
+            };
+          })
+        );
+        setInbox(_inboxWithMsgs);
+      }
+    };
+
+    readInbox();
+  }, [selfID]);
+
   return (
     <Grid item xs={3}>
       <Grid item xs={12} style={{ padding: "10px" }}>
@@ -23,27 +106,14 @@ export default function ThreadList({ selfID }: { selfID: SelfID }) {
       </Grid>
       <Divider />
       <List>
-        {/*List Item needs to populate the correct pulic address.*/}
-        <ListItem button key="RemySharp">
-          <ListItemIcon>
-            <Blockies seed="0x862efbff8e2a634dbda85b461f4d1c41a557c46b" />
-          </ListItemIcon>
-          <ListItemText primary="Ryan.eth">Ryan.eth</ListItemText>
-        </ListItem>
-        {/*List Item needs to populate the correct pulic address.*/}
-        <ListItem button key="Alice">
-          <ListItemIcon>
-            <Blockies seed="0xcd2e72aebe2a203b84f46deec948e6465db51c75" />
-          </ListItemIcon>
-          <ListItemText primary="Alice.eth">Alice.eth</ListItemText>
-        </ListItem>
-        {/*List Item needs to populate the correct pulic address.*/}
-        <ListItem button key="CindyBaker">
-          <ListItemIcon>
-            <Blockies seed="0xB3E625228bE2D986Af0076aB8F75bA3318db26d1" />
-          </ListItemIcon>
-          <ListItemText primary="Cindy.eth">Cindy.eth</ListItemText>
-        </ListItem>
+        {inbox.map((thread, i) => (
+          <ListItem button key={i}>
+            <ListItemIcon>
+              <Blockies seed={thread.from} />
+            </ListItemIcon>
+            <ListItemText primary={thread.from}>{thread.from}</ListItemText>
+          </ListItem>
+        ))}
       </List>
     </Grid>
   );

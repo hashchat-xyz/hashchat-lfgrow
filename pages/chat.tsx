@@ -14,19 +14,20 @@ import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import Fab from "@mui/material/Fab";
 import SendIcon from "@mui/icons-material/Send";
-import { SelfID } from "@self.id/web";
 import Header from "../components/Header";
 import ThreadList from "../components/ThreadList";
 import Blockies from "react-blockies";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useWeb3React } from "@web3-react/core";
-import { useSelfID } from "../hooks";
+import { useSelfID } from "../src/hooks";
 
 export default function Chat() {
   const { active } = useWeb3React();
   const router = useRouter();
   const { selfID } = useSelfID();
+
+  console.log(selfID);
 
   useEffect(() => {
     if (!active) {
@@ -39,7 +40,7 @@ export default function Chat() {
       <Header />
       {selfID.id ? (
         <Grid container padding={3}>
-          <ThreadList selfID={selfID}></ThreadList>
+          <ThreadList></ThreadList>
           <Grid item xs={9}>
             <List>
               {/*List Item needs to populate message streams and update the time the message was recieved/sent.*/}
