@@ -3,6 +3,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
+//importing theme components here
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -22,8 +23,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useWeb3React } from "@web3-react/core";
 import { useSelfID } from "../src/hooks";
-//testing dark mode theme here
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+
+//creating the dark mode theme here
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
 
 export default function Chat() {
   const { active } = useWeb3React();
@@ -38,17 +44,20 @@ export default function Chat() {
   }, [active]);
 
   return (
-    <div>
-      <Header />
-      {selfID.id ? (
-        <Grid container padding={3}>
-          <ThreadList
-            selectedThread={selectedThread}
-            setSelectedThread={setSelectedThread}
-          ></ThreadList>
-          <MessageList threadId={selectedThread}></MessageList>
-        </Grid>
-      ) : null}
-    </div>
+    //wraped contents in theme provider but having trouble with main contents switching themes.
+    <ThemeProvider theme={darkTheme}>
+      <div>
+        <Header />
+        {selfID.id ? (
+          <Grid container padding={3}>
+            <ThreadList
+              selectedThread={selectedThread}
+              setSelectedThread={setSelectedThread}
+            ></ThreadList>
+            <MessageList threadId={selectedThread}></MessageList>
+          </Grid>
+        ) : null}
+      </div>
+    </ThemeProvider>
   );
 }
