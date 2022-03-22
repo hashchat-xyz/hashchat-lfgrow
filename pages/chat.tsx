@@ -23,7 +23,7 @@ import { useRouter } from "next/router";
 import { useWeb3React } from "@web3-react/core";
 import { useSelfID } from "../src/hooks";
 
-export default function Chat() {
+export function Chat() {
   const { active } = useWeb3React();
   const router = useRouter();
   const { selfID } = useSelfID();
@@ -36,7 +36,7 @@ export default function Chat() {
   }, [active]);
 
   return (
-    <div>
+    <Grid>
       <Header />
       {selfID.id ? (
         <Grid container padding={3}>
@@ -47,6 +47,8 @@ export default function Chat() {
           <MessageList threadId={selectedThread}></MessageList>
         </Grid>
       ) : null}
-    </div>
+    </Grid>
   );
 }
+
+export default React.memo(Chat);

@@ -8,18 +8,18 @@ import { useMultiAuth } from "@self.id/multiauth";
 import Blockies from "react-blockies";
 import { useWeb3React } from "@web3-react/core";
 
-export default function Header() {
+export function Header() {
   const { active, account } = useWeb3React();
 
   return (
-    <div>
+    <Grid>
       <Grid container item xs={12} component={Paper} padding={5}>
         <Grid item xs={6}>
           <Typography variant="h4">Hashchat</Typography>
         </Grid>
         <Grid item xs={6} textAlign="right">
           {active && account ? (
-            <div>
+            <Grid>
               <Button
                 onClick={() => {
                   // disconnect();
@@ -30,7 +30,7 @@ export default function Header() {
                 {account}
               </Button>
               <Blockies seed={account} />
-            </div>
+            </Grid>
           ) : (
             <Button
               onClick={() => {
@@ -44,6 +44,8 @@ export default function Header() {
           )}
         </Grid>
       </Grid>
-    </div>
+    </Grid>
   );
 }
+
+export default React.memo(Header);
