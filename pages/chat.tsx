@@ -44,12 +44,11 @@ export default function Chat() {
   }, [active]);
 
   return (
-    //wraped contents in theme provider but having trouble with main contents switching themes.
     <ThemeProvider theme={darkTheme}>
       <div>
         <Header />
         {selfID.id ? (
-          <Grid container padding={3}>
+          <Grid container padding={3} backgroundColor="#393939">
             <ThreadList
               selectedThread={selectedThread}
               setSelectedThread={setSelectedThread}
