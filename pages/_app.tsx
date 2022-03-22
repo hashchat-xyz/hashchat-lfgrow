@@ -11,6 +11,12 @@ const darkTheme = createTheme({
   },
 });
 
+const lightTheme = createTheme({
+  palette: {
+    mode: "light",
+  },
+});
+
 function getLibrary(provider: any, connector: any) {
   return new Web3Provider(provider);
 }

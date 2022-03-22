@@ -1,3 +1,4 @@
+//togle stuff
 import * as React from "react";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
@@ -32,11 +33,24 @@ const darkTheme = createTheme({
   },
 });
 
+//creating the light mode theme here
+const lightTheme = createTheme({
+  palette: {
+    mode: "light",
+  },
+});
+
 export default function Chat() {
   const { active } = useWeb3React();
   const router = useRouter();
   const { selfID } = useSelfID();
   const [selectedThread, setSelectedThread] = useState("");
+  const { theme, setTheme } = useState("dark");
+
+  // attempts to toggle between themes
+  function themeToggler() {
+    theme === "light" ? setTheme("dark") : setTheme("light");
+  }
 
   useEffect(() => {
     if (!active) {
@@ -45,10 +59,11 @@ export default function Chat() {
   }, [active]);
 
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
       <CssBaseline />
       <div>
         <Header />
+        <Button onClick={() => themeToggler()}>Click me </Button>
         {selfID.id ? (
           <Grid container padding={3}>
             <ThreadList
