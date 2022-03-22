@@ -48,7 +48,7 @@ export default function Chat() {
       <div>
         <Header />
         {selfID.id ? (
-          <Grid container padding={3} backgroundColor="#393939">
+          <Grid container padding={3} bgcolor={"#393939"}>
             <ThreadList
               selectedThread={selectedThread}
               setSelectedThread={setSelectedThread}
