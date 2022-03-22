@@ -9,7 +9,7 @@ function getLibrary(provider: any, connector: any) {
 
 function App({ Component, pageProps }: AppProps) {
   return (
-    <Web3ReactProvider getLibrary={getLibrary}>
+    <Web3ReactProvider getLibrary={getLibrary} children={undefined}>
       <Component {...pageProps} />
     </Web3ReactProvider>
   );

@@ -10,7 +10,7 @@ const injected = new InjectedConnector({
   supportedChainIds: [1, 3, 4, 5, 42, 56, 97, 137, 1337],
 });
 
-export default function Connect() {
+export function Connect() {
   const { activate } = useWeb3React();
   const [activating, setActivating] = React.useState(false);
 
@@ -25,7 +25,7 @@ export default function Connect() {
   }
 
   return (
-    <div>
+    <>
       <Grid container item xs={12} component={Paper} padding={5}>
         <Grid item xs={6}>
           <Typography variant="h4">Hashchat</Typography>
@@ -43,6 +43,8 @@ export default function Connect() {
           </Button>
         </Grid>
       </Grid>
-    </div>
+    </>
   );
 }
+
+export default React.memo(Connect);

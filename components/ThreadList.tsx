@@ -23,7 +23,7 @@ import { TileLoader } from "@glazed/tile-loader";
 
 const CHAIN = "polygon";
 
-export default function ThreadList({
+export function ThreadList({
   selectedThread,
   setSelectedThread,
 }: {
@@ -89,12 +89,14 @@ export default function ThreadList({
             <ListItemIcon>
               <Blockies seed={thread.from} />
             </ListItemIcon>
-            <ListItemText primary={thread.threadId.toString().slice(0, 10)}>
+            <ListItemText primary={thread.from.toString().slice(-10)}>
               {thread.from}
             </ListItemText>
           </ListItemButton>
-        ))}
+        )).reverse()}
       </List>
     </Grid>
   );
 }
+
+export default React.memo(ThreadList);
