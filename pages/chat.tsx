@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useWeb3React } from "@web3-react/core";
 import { useSelfID } from "../src/hooks";
+import CssBaseline from "@mui/material/CssBaseline";
 
 //creating the dark mode theme here
 const darkTheme = createTheme({
@@ -45,10 +46,11 @@ export default function Chat() {
 
   return (
     <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
       <div>
         <Header />
         {selfID.id ? (
-          <Grid container padding={3} bgcolor={"#393939"}>
+          <Grid container padding={3}>
             <ThreadList
               selectedThread={selectedThread}
               setSelectedThread={setSelectedThread}
