@@ -45,7 +45,7 @@ export default function Chat() {
   const router = useRouter();
   const { selfID } = useSelfID();
   const [selectedThread, setSelectedThread] = useState("");
-  const [ theme, setTheme ] = useState("dark");
+  const [theme, setTheme] = useState("dark");
 
   // attempts to toggle between themes
   function themeToggler() {
@@ -63,7 +63,6 @@ export default function Chat() {
       <CssBaseline />
       <>
         <Header />
-        <Button onClick={() => themeToggler()}>Click me </Button>
         {selfID.id ? (
           <Grid container padding={3}>
             <ThreadList
