@@ -22,6 +22,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useWeb3React } from "@web3-react/core";
 import { useSelfID } from "../src/hooks";
+//testing dark mode theme here
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 export default function Chat() {
   const { active } = useWeb3React();
