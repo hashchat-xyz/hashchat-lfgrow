@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import {
   AppendCollection,
   Collection,
-} from "@cbj/ceramic-append-collection/dist/index.js";
+} from "@cbj/ceramic-append-collection";
 import {
   xc20pDirEncrypter,
   xc20pDirDecrypter,

@@ -23,7 +23,7 @@ import { TileDocument } from "@ceramicnetwork/stream-tile";
 import {
   AppendCollection,
   Collection,
-} from "@cbj/ceramic-append-collection/dist/index.js";
+} from "@cbj/ceramic-append-collection";
 import Fab from "@mui/material/Fab";
 import SendIcon from "@mui/icons-material/Send";
 import SendMsg from "../components/SendMsg";

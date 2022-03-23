@@ -20,7 +20,7 @@ import { TileDocument } from "@ceramicnetwork/stream-tile";
 import {
   AppendCollection,
   Collection,
-} from "@cbj/ceramic-append-collection/dist/index.js";
+} from "@cbj/ceramic-append-collection";
 import { useWeb3React } from "@web3-react/core";
 import { ReactJSXElement } from "@emotion/react/types/jsx-namespace";
 import { useSelfID } from "../src/hooks";

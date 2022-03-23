@@ -1,25 +1,9 @@
 //togle stuff
 import * as React from "react";
 import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
-//importing theme components here
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Avatar from "@mui/material/Avatar";
-import Divider from "@mui/material/Divider";
-import TextField from "@mui/material/TextField";
-import Fab from "@mui/material/Fab";
-import SendIcon from "@mui/icons-material/Send";
 import Header from "../components/Header";
 import ThreadList from "../components/ThreadList";
 import MessageList from "../components/MessageList";
-import Blockies from "react-blockies";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useWeb3React } from "@web3-react/core";

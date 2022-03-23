@@ -9,13 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@cbj/ceramic-append-collection": "^0.1.19",
+    "@cbj/ceramic-append-collection": "git+https://github.com/codynhat/ceramic-append-collection.git",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
     "@ethersproject/providers": "^5.6.1",
     "@glazed/tile-loader": "^0.1.3",
     "@mui/icons-material": "^5.5.1",
-    "@mui/material": "^5.5.1",
+    "@mui/material": "^5.5.2",
     "@self.id/framework": "^0.2.0",
     "@self.id/web": "^0.3.0",
     "@types/jest": "^27.4.1",
