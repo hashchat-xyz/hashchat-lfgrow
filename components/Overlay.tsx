@@ -18,8 +18,10 @@ import { TileDocument } from "@ceramicnetwork/stream-tile";
 import {
   AppendCollection,
   Collection,
-} from "@cbj/ceramic-append-collection/dist/index.js";
+} from "@cbj/ceramic-append-collection";
 import { useSelfID } from "../src/hooks";
+import { sha256 } from 'multiformats/hashes/sha2'
+import { base32 } from "multiformats/bases/base32"
 
 export interface SimpleDialogProps {
   open: boolean;
@@ -99,7 +101,16 @@ export default function Overlay() {
       chain: CHAIN,
     });
 
-    const doc = await TileDocument.create(selfID.client.ceramic, {
+    const hashOfKey = await sha256.digest(encryptedSymmetricKey)
+    const strHashOfKey = base32.encode(hashOfKey.bytes).toString()
+
+    const doc = await TileDocument.deterministic(selfID.client.ceramic, {
+      controllers: [selfID.did.id],
+      family: 'hashchat:lit',
+      tags: [`hashchat:lit:${strHashOfKey}`],
+    })
+      
+    await doc.update({
       accessControlConditions: accessControlConditions,
       encryptedSymmetricKey: encodeb64(encryptedSymmetricKey),
       encryptedStreamId: encryptedStreamId,

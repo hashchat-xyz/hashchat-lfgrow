@@ -23,6 +23,7 @@
     "@web3-react/injected-connector": "^6.0.7",
     "ethers": "^5.6.1",
     "lit-js-sdk": "^1.1.149",
+    "multiformats": "^9.6.4",
     "next": "12.1.0",
     "next-color-mode": "0.0.1",
     "next-themes": "^0.1.1",
