@@ -15,6 +15,7 @@ import {
   decryptMsg,
   generateLitAuthSig,
   getInbox,
+  CHAIN,
 } from "../src/utils";
 import LitJsSdk from "lit-js-sdk";
 import { useWeb3React } from "@web3-react/core";
@@ -25,9 +26,7 @@ import {
 } from "@cbj/ceramic-append-collection/dist/index.js";
 import Fab from "@mui/material/Fab";
 import SendIcon from "@mui/icons-material/Send";
-import SendMsg from '../components/SendMsg';
-
-const CHAIN = "polygon";
+import SendMsg from "../components/SendMsg";
 
 export function MessageList({ threadId }: { threadId: string }) {
   const { account } = useWeb3React();
@@ -108,19 +107,6 @@ export function MessageList({ threadId }: { threadId: string }) {
         ))}
       </List>
       <Divider />
-      <Grid container style={{ padding: "20px" }}>
-        {/* <Grid item xs={11}>
-          <TextField
-            id="outlined-basic-email"
-            label="Type Something"
-            fullWidth
-          />
-        </Grid> */}
-        <SendMsg />
-        {/* <Grid item xs={1} style={{ display: "flex", justifyContent: "flex-end" }}>
-          <Fab color="primary" aria-label="add">
-            <SendIcon /> */}
-      </Grid>
     </Grid>
   );
 }
