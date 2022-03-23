@@ -68,8 +68,7 @@ export function ThreadList({
 
   return (
     <Grid item xs={3}>
-      <Grid item xs={12} style={{ padding: "10px" }}>
-        {/*Search Field needs to query list of contacts and populate the correct contact at the top*/}
+      {/* <Grid item xs={12} style={{ padding: "10px" }}>
         <TextField
           id="outlined-basic-email"
           label="Search My Contacts"
@@ -77,24 +76,26 @@ export function ThreadList({
           fullWidth
         />
       </Grid>
-      <Divider />
+      <Divider /> */}
       <List>
-        {inbox.map((thread, i) => (
-          <ListItemButton
-            selected={selectedThread === thread.threadId}
-            key={i}
-            onClick={() => {
-              setSelectedThread(thread.threadId);
-            }}
-          >
-            <ListItemIcon>
-              <Blockies seed={thread.from} />
-            </ListItemIcon>
-            <ListItemText primary={thread.from.toString().slice(-10)}>
-              {thread.from}
-            </ListItemText>
-          </ListItemButton>
-        )).reverse()}
+        {inbox
+          .map((thread, i) => (
+            <ListItemButton
+              selected={selectedThread === thread.threadId}
+              key={i}
+              onClick={() => {
+                setSelectedThread(thread.threadId);
+              }}
+            >
+              <ListItemIcon>
+                <Blockies seed={thread.from} />
+              </ListItemIcon>
+              <ListItemText primary={thread.from.toString().slice(-10)}>
+                {thread.from}
+              </ListItemText>
+            </ListItemButton>
+          ))
+          .reverse()}
       </List>
     </Grid>
   );
