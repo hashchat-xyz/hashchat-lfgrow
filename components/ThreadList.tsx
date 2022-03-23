@@ -8,6 +8,7 @@ import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
 import Blockies from "react-blockies";
 import { SelfID } from "@self.id/web";
+
 import { useSelfID } from "../src/hooks";
 import { useEffect, useState } from "react";
 import {
