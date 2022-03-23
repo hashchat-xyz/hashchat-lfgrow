@@ -26,14 +26,15 @@ import {
 } from "@cbj/ceramic-append-collection";
 import Fab from "@mui/material/Fab";
 import SendIcon from "@mui/icons-material/Send";
-import SendMsg from "../components/SendMsg";
 
 export function MessageList({ threadId }: { threadId: string }) {
   const { account } = useWeb3React();
   const { selfID, ethProvider, web3Provider } = useSelfID();
   const [messages, setMessages] = useState([] as any[]);
+  const [showSendBox, setShowSendBox] = useState(false);
 
   useEffect(() => {
+    setShowSendBox(false);
     setMessages([]);
 
     const readThread = async () => {
@@ -78,6 +79,7 @@ export function MessageList({ threadId }: { threadId: string }) {
         );
 
         setMessages(cleartextMsgs);
+        setShowSendBox(true);
       }
     };
 
@@ -107,6 +109,21 @@ export function MessageList({ threadId }: { threadId: string }) {
         ))}
       </List>
       <Divider />
+      {showSendBox ? <Grid container style={{ padding: "20px" }}>
+        <Grid item xs={11}>
+          <TextField
+            id="outlined-basic-email"
+            label="Type Something"
+            fullWidth
+          />
+        </Grid>
+        <Grid xs={1} style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Fab color="primary" aria-label="add">
+            {/*Send Icon needs to be functional.*/}
+            <SendIcon />
+          </Fab>
+        </Grid>
+      </Grid> : null}
     </Grid>
   );
 }
