@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 //importing theme components here
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ThemeProvider } from 'styled-components';
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -24,33 +24,15 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useWeb3React } from "@web3-react/core";
 import { useSelfID } from "../src/hooks";
-import CssBaseline from "@mui/material/CssBaseline";
-
-//creating the dark mode theme here
-const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-  },
-});
-
-//creating the light mode theme here
-const lightTheme = createTheme({
-  palette: {
-    mode: "light",
-  },
-});
+import { lightTheme, darkTheme } from '../src/theme';
 
 export default function Chat() {
   const { active } = useWeb3React();
   const router = useRouter();
   const { selfID } = useSelfID();
   const [selectedThread, setSelectedThread] = useState("");
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState(lightTheme);
 
-  // attempts to toggle between themes
-  function themeToggler() {
-    theme === "light" ? setTheme("dark") : setTheme("light");
-  }
 
   useEffect(() => {
     if (!active) {
@@ -59,8 +41,8 @@ export default function Chat() {
   }, [active]);
 
   return (
-    <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
-      <CssBaseline />
+    <ThemeProvider theme={lightTheme}>
+      {/* <CssBaseline /> */}
       <>
         <Header />
         {selfID.id ? (
