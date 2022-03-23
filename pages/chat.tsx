@@ -41,7 +41,7 @@ const lightTheme = createTheme({
   },
 });
 
-export default function Chat() {
+export function Chat() {
   const { active } = useWeb3React();
   const router = useRouter();
   const { selfID } = useSelfID();
@@ -80,3 +80,5 @@ export default function Chat() {
     </ThemeProvider>
   );
 }
+
+export default React.memo(Chat);

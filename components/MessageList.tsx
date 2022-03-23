@@ -28,7 +28,7 @@ import SendIcon from "@mui/icons-material/Send";
 
 const CHAIN = "polygon";
 
-export default function MessageList({ threadId }: { threadId: string }) {
+export function MessageList({ threadId }: { threadId: string }) {
   const { account } = useWeb3React();
   const { selfID, ethProvider, web3Provider } = useSelfID();
   const [messages, setMessages] = useState([] as any[]);
@@ -97,10 +97,10 @@ export default function MessageList({ threadId }: { threadId: string }) {
                 ></ListItemText>
               </Grid>
               <Grid item xs={12}>
-                {/* <ListItemText
+                <ListItemText
                   style={{ display: "flex", justifyContent: "flex-end" }}
                   secondary="09:30"
-                ></ListItemText> */}
+                ></ListItemText>
               </Grid>
             </Grid>
           </ListItem>
@@ -115,7 +115,7 @@ export default function MessageList({ threadId }: { threadId: string }) {
             fullWidth
           />
         </Grid>
-        <Grid xs={1} style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Grid item xs={1} style={{ display: "flex", justifyContent: "flex-end" }}>
           <Fab color="primary" aria-label="add">
             {/*Send Icon needs to be functional.*/}
             <SendIcon />
@@ -125,3 +125,5 @@ export default function MessageList({ threadId }: { threadId: string }) {
     </Grid>
   );
 }
+
+export default React.memo(MessageList);

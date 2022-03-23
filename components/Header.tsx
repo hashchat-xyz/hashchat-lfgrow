@@ -27,7 +27,7 @@ const lightTheme = createTheme({
   },
 });
 
-export default function Header() {
+export function Header() {
   const { active, account } = useWeb3React();
   //set theme
   const [theme, setTheme] = useState("dark");
@@ -39,14 +39,14 @@ export default function Header() {
 
   return (
     <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
-      <div>
+      <Grid>
         <Grid container item xs={12} component={Paper} padding={5}>
           <Grid item xs={3}>
             <Typography variant="h4">Hashchat</Typography>
           </Grid>
           <Grid item xs={9} textAlign="right" spacing={2}>
             {active && account ? (
-              <div>
+              <Grid>
                 <Button
                   onClick={() => {
                     // disconnect();
@@ -63,21 +63,26 @@ export default function Header() {
                 >
                   Change Theme
                 </Button>
-              </div>
+                <Blockies seed={account} />
+              </Grid>
             ) : (
-              <Button
-                onClick={() => {
-                  // connect();
-                }}
-                variant="contained"
-                size="small"
-              >
-                Connect
-              </Button>
+              <Grid>
+                <Button
+                  onClick={() => {
+                    // connect();
+                  }}
+                  variant="contained"
+                  size="small"
+                >
+                  Connect
+                </Button>
+              </Grid>
             )}
           </Grid>
         </Grid>
-      </div>
+      </Grid>
     </ThemeProvider>
   );
 }
+
+export default React.memo(Header);
