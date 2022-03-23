@@ -27,31 +27,11 @@ import { useSelfID } from "../src/hooks";
 import CssBaseline from "@mui/material/CssBaseline";
 import Overlay from "../components/Overlay";
 
-//creating the dark mode theme here
-const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-  },
-});
-
-//creating the light mode theme here
-const lightTheme = createTheme({
-  palette: {
-    mode: "light",
-  },
-});
-
 export function Chat() {
   const { active } = useWeb3React();
   const router = useRouter();
   const { selfID } = useSelfID();
   const [selectedThread, setSelectedThread] = useState("");
-  const [theme, setTheme] = useState("dark");
-
-  // attempts to toggle between themes
-  function themeToggler() {
-    theme === "light" ? setTheme("dark") : setTheme("light");
-  }
 
   useEffect(() => {
     if (!active) {
@@ -60,24 +40,22 @@ export function Chat() {
   }, [active]);
 
   return (
-    <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
+    <>
       <CssBaseline />
-      <>
-        <Header />
-        <Grid item xs={12} paddingLeft={5}>
-          <Overlay />
+      <Header />
+      <Grid item xs={12} paddingLeft={5}>
+        <Overlay />
+      </Grid>
+      {selfID.id ? (
+        <Grid container padding={3}>
+          <ThreadList
+            selectedThread={selectedThread}
+            setSelectedThread={setSelectedThread}
+          ></ThreadList>
+          <MessageList threadId={selectedThread}></MessageList>
         </Grid>
-        {selfID.id ? (
-          <Grid container padding={3}>
-            <ThreadList
-              selectedThread={selectedThread}
-              setSelectedThread={setSelectedThread}
-            ></ThreadList>
-            <MessageList threadId={selectedThread}></MessageList>
-          </Grid>
-        ) : null}
-      </>
-    </ThemeProvider>
+      ) : null}
+    </>
   );
 }
 
