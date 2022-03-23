@@ -14,7 +14,7 @@ import {
 import { prepareCleartext, decodeCleartext } from "dag-jose-utils";
 import axios from "axios";
 
-const CHAIN = "polygon";
+export const CHAIN = "polygon";
 const WORKER_ENDPOINT = "https://hashchat-worker.codynhat.workers.dev";
 
 export function setAccessControlConditions(toAddr: string) {
