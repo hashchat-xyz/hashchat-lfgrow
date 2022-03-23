@@ -39,12 +39,15 @@ export default function Header() {
     <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
       <div>
         <Grid container item xs={12} component={Paper} padding={5}>
-          <Grid item xs={6}>
+          <Grid item xs={3}>
             <Typography variant="h4">Hashchat</Typography>
           </Grid>
-          <Grid item xs={6} textAlign="right" spacing={2}>
+          <Grid item xs={9} textAlign="right" spacing={2}>
             {active && account ? (
               <div>
+                <Button variant="contained" size={"small"} color={"secondary"}>
+                  Send Message
+                </Button>
                 <Button
                   onClick={() => {
                     // disconnect();
@@ -61,7 +64,6 @@ export default function Header() {
                 >
                   Change Theme
                 </Button>
-                <Blockies seed={account} />
               </div>
             ) : (
               <Button
