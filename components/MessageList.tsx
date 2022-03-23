@@ -25,6 +25,7 @@ import {
 } from "@cbj/ceramic-append-collection/dist/index.js";
 import Fab from "@mui/material/Fab";
 import SendIcon from "@mui/icons-material/Send";
+import SendMsg from '../components/SendMsg';
 
 const CHAIN = "polygon";
 
@@ -108,19 +109,17 @@ export function MessageList({ threadId }: { threadId: string }) {
       </List>
       <Divider />
       <Grid container style={{ padding: "20px" }}>
-        <Grid item xs={11}>
+        {/* <Grid item xs={11}>
           <TextField
             id="outlined-basic-email"
             label="Type Something"
             fullWidth
           />
-        </Grid>
-        <Grid item xs={1} style={{ display: "flex", justifyContent: "flex-end" }}>
+        </Grid> */}
+        <SendMsg />
+        {/* <Grid item xs={1} style={{ display: "flex", justifyContent: "flex-end" }}>
           <Fab color="primary" aria-label="add">
-            {/*Send Icon needs to be functional.*/}
-            <SendIcon />
-          </Fab>
-        </Grid>
+            <SendIcon /> */}
       </Grid>
     </Grid>
   );
