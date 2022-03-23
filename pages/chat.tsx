@@ -25,6 +25,7 @@ import { useRouter } from "next/router";
 import { useWeb3React } from "@web3-react/core";
 import { useSelfID } from "../src/hooks";
 import CssBaseline from "@mui/material/CssBaseline";
+import Overlay from "../components/Overlay";
 
 //creating the dark mode theme here
 const darkTheme = createTheme({
@@ -63,6 +64,9 @@ export default function Chat() {
       <CssBaseline />
       <>
         <Header />
+        <Grid item xs={12} paddingLeft={5}>
+          <Overlay />
+        </Grid>
         {selfID.id ? (
           <Grid container padding={3}>
             <ThreadList

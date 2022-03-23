@@ -10,6 +10,8 @@ import { useWeb3React } from "@web3-react/core";
 //importing theme components here
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
+import DialogTitle from "@mui/material/DialogTitle";
+import Dialog from "@mui/material/Dialog";
 
 //creating the dark mode theme here
 const darkTheme = createTheme({
@@ -45,9 +47,6 @@ export default function Header() {
           <Grid item xs={9} textAlign="right" spacing={2}>
             {active && account ? (
               <div>
-                <Button variant="contained" size={"small"} color={"secondary"}>
-                  Send Message
-                </Button>
                 <Button
                   onClick={() => {
                     // disconnect();
