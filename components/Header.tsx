@@ -7,17 +7,19 @@ import { useConnection } from "@self.id/framework";
 import { useMultiAuth } from "@self.id/multiauth";
 import Blockies from "react-blockies";
 import { useWeb3React } from "@web3-react/core";
+import { useColorMode } from "next-color-mode";
 
 export function Header() {
   const { active, account } = useWeb3React();
+  const { toggleColorMode } = useColorMode();
 
   return (
     <Grid>
       <Grid container item xs={12} component={Paper} padding={5}>
-        <Grid item xs={6}>
+        <Grid item xs={3}>
           <Typography variant="h4">Hashchat</Typography>
         </Grid>
-        <Grid item xs={6} textAlign="right">
+        <Grid item xs={9} textAlign="right" spacing={2}>
           {active && account ? (
             <Grid>
               <Button
@@ -25,22 +27,31 @@ export function Header() {
                   // disconnect();
                 }}
                 variant="contained"
-                size="large"
+                size="small"
               >
                 {account}
+              </Button>
+              <Button
+                variant={"contained"}
+                size={"small"}
+                onClick={() => toggleColorMode()}
+              >
+                Change Theme
               </Button>
               <Blockies seed={account} />
             </Grid>
           ) : (
-            <Button
-              onClick={() => {
-                // connect();
-              }}
-              variant="contained"
-              size="large"
-            >
-              Connect
-            </Button>
+            <Grid>
+              <Button
+                onClick={() => {
+                  // connect();
+                }}
+                variant="contained"
+                size="small"
+              >
+                Connect
+              </Button>
+            </Grid>
           )}
         </Grid>
       </Grid>
