@@ -36,6 +36,7 @@ export function Header() {
               <Button
                 variant={"text"}
                 size={"small"}
+                style={{ backgroundColor: "transparent" }}
                 onClick={() => toggleColorMode()}
               >
                 <img src="/theme-emoji.png" width={30} />
