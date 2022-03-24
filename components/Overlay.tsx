@@ -4,7 +4,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-import { setAccessControlConditions } from "../src/utils";
+import { postToOutbox, setAccessControlConditions } from "../src/utils";
 import LitJsSdk from "lit-js-sdk";
 import {
   generateLitAuthSig,
@@ -15,13 +15,11 @@ import {
   CHAIN,
 } from "../src/utils";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
-import {
-  AppendCollection,
-  Collection,
-} from "@cbj/ceramic-append-collection";
+import { AppendCollection, Collection } from "@cbj/ceramic-append-collection";
 import { useSelfID } from "../src/hooks";
-import { sha256 } from 'multiformats/hashes/sha2'
-import { base32 } from "multiformats/bases/base32"
+import { sha256 } from "multiformats/hashes/sha2";
+import { base32 } from "multiformats/bases/base32";
+import { useWeb3React } from "@web3-react/core";
 
 export interface SimpleDialogProps {
   open: boolean;
@@ -70,6 +68,7 @@ export default function Overlay() {
   const [open, setOpen] = React.useState(false);
   const [isCreating, setCreating] = React.useState(false);
   const { selfID, web3Provider } = useSelfID();
+  const { account } = useWeb3React();
 
   const createThread = async (toAddr: string) => {
     setCreating(true);
@@ -101,15 +100,15 @@ export default function Overlay() {
       chain: CHAIN,
     });
 
-    const hashOfKey = await sha256.digest(encryptedSymmetricKey)
-    const strHashOfKey = base32.encode(hashOfKey.bytes).toString()
+    const hashOfKey = await sha256.digest(encryptedSymmetricKey);
+    const strHashOfKey = base32.encode(hashOfKey.bytes).toString();
 
     const doc = await TileDocument.deterministic(selfID.client.ceramic, {
       controllers: [selfID.did.id],
-      family: 'hashchat:lit',
+      family: "hashchat:lit",
       tags: [`hashchat:lit:${strHashOfKey}`],
-    })
-      
+    });
+
     await doc.update({
       accessControlConditions: accessControlConditions,
       encryptedSymmetricKey: encodeb64(encryptedSymmetricKey),
@@ -118,6 +117,7 @@ export default function Overlay() {
     const _streamId = doc.id.toString();
 
     await postToInbox(toAddr, _streamId);
+    await postToOutbox(account!, `hashchat:lit:${strHashOfKey}`);
 
     console.log("Collection: ", collection.id.toString());
 

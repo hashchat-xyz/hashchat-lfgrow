@@ -1,9 +1,6 @@
 import LitJsSdk from "lit-js-sdk";
 import { ethers } from "ethers";
-import {
-  AppendCollection,
-  Collection,
-} from "@cbj/ceramic-append-collection";
+import { AppendCollection, Collection } from "@cbj/ceramic-append-collection";
 import {
   xc20pDirEncrypter,
   xc20pDirDecrypter,
@@ -94,6 +91,19 @@ export async function getInbox(user: string): Promise<string[]> {
     `${WORKER_ENDPOINT}/inbox/${user.toLowerCase()}`
   );
   return result.data["inbox"];
+}
+
+export async function postToOutbox(user: string, threadId: string) {
+  await axios.post(
+    `${WORKER_ENDPOINT}/outbox/${user.toLowerCase()}/${threadId.toLowerCase()}`
+  );
+}
+
+export async function getOutbox(user: string): Promise<string[]> {
+  const result = await axios.get(
+    `${WORKER_ENDPOINT}/outbox/${user.toLowerCase()}`
+  );
+  return result.data["outbox"];
 }
 
 export function encodeb64(uintarray: any) {

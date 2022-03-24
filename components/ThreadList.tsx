@@ -16,6 +16,7 @@ import {
   decryptMsg,
   generateLitAuthSig,
   getInbox,
+  getOutbox,
 } from "../src/utils";
 import LitJsSdk from "lit-js-sdk";
 import { useWeb3React } from "@web3-react/core";
@@ -43,8 +44,46 @@ export function ThreadList({
         await litNodeClient.connect();
 
         const _inbox = await getInbox(account);
+        const _outbox = await getOutbox(account);
 
         const loader = new TileLoader({ ceramic: selfID.client.ceramic });
+
+        const _outboxWithMsgs = (
+          await Promise.all(
+            _outbox.map(async (threadId) => {
+              const outbox = await TileDocument.deterministic(
+                selfID.client.ceramic,
+                {
+                  controllers: [selfID.did.id],
+                  family: "hashchat:lit",
+                  tags: [threadId],
+                }
+              );
+
+              return loader.load(outbox.id);
+            })
+          )
+        )
+          .map((stream) => {
+            return {
+              threadId: stream.metadata.tags![0],
+              inbox: [],
+              outbox: stream.id,
+            };
+          })
+          .reduce(
+            (
+              prev: Record<string, Thread>,
+              thread: Thread
+            ): Record<string, Thread> => {
+              let record = prev[thread.threadId];
+              if (!record) {
+                prev[thread.threadId] = thread;
+              }
+              return prev;
+            },
+            {} as Record<string, Thread>
+          );
 
         const _inboxWithMsgs = Object.values(
           await (
@@ -91,7 +130,7 @@ export function ThreadList({
                 }
                 return prev;
               },
-              Promise.resolve({} as Record<string, Thread>)
+              Promise.resolve(_outboxWithMsgs)
             )
         );
 

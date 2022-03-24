@@ -17,6 +17,7 @@ import {
   getInbox,
   CHAIN,
   encryptAndAddMessageToCollection,
+  postToOutbox,
 } from "../src/utils";
 import LitJsSdk from "lit-js-sdk";
 import { useWeb3React } from "@web3-react/core";
@@ -128,6 +129,8 @@ export function MessageList({ thread }: { thread: Thread }) {
         newMessage,
         outbox.key
       );
+
+      await postToOutbox(account!, thread.threadId);
     }
 
     setSending(false);
