@@ -37,6 +37,8 @@ export function Header() {
                 variant={"text"}
                 size={"small"}
                 style={{ backgroundColor: "transparent" }}
+                disableElevation
+                disableRipple
                 onClick={() => toggleColorMode()}
               >
                 <img src="/theme-emoji.png" width={30} />
