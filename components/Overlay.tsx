@@ -64,7 +64,7 @@ function SimpleDialog(props: SimpleDialogProps) {
   );
 }
 
-export default function Overlay() {
+export default function Overlay({ reload }: { reload: any }) {
   const [open, setOpen] = React.useState(false);
   const [isCreating, setCreating] = React.useState(false);
   const { selfID, web3Provider } = useSelfID();
@@ -127,6 +127,7 @@ export default function Overlay() {
 
     setCreating(false);
     setOpen(false);
+    reload();
   };
 
   const handleClickOpen = () => {

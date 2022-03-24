@@ -27,15 +27,19 @@ import { Thread } from "../pages/chat";
 export function ThreadList({
   selectedThread,
   setSelectedThread,
+  reloadTrigger,
 }: {
   selectedThread: any;
   setSelectedThread: any;
+  reloadTrigger: any;
 }) {
   const { account } = useWeb3React();
   const { selfID, ethProvider, web3Provider } = useSelfID();
   const [inbox, setInbox] = useState([] as Thread[]);
 
   useEffect(() => {
+    setInbox([]);
+
     const readInbox = async () => {
       if (selfID != null && selfID.client != null && account) {
         const litNodeClient = new LitJsSdk.LitNodeClient();
@@ -65,6 +69,7 @@ export function ThreadList({
           )
         )
           .map((stream) => {
+            console.log("Outbox: " + stream.id.toString());
             return {
               threadId: stream.metadata.tags![0],
               inbox: [],
@@ -139,7 +144,7 @@ export function ThreadList({
     };
 
     readInbox();
-  }, [selfID]);
+  }, [selfID, reloadTrigger]);
 
   return (
     <Grid item xs={3}>

@@ -9,7 +9,7 @@ import Blockies from "react-blockies";
 import { useWeb3React } from "@web3-react/core";
 import { useColorMode } from "next-color-mode";
 
-export function Header() {
+export function Header({ reload }: { reload: any }) {
   const { active, account } = useWeb3React();
   const { toggleColorMode } = useColorMode();
 
@@ -37,6 +37,13 @@ export function Header() {
                 onClick={() => toggleColorMode()}
               >
                 Change Theme
+              </Button>
+              <Button
+                variant={"contained"}
+                size={"small"}
+                onClick={() => reload()}
+              >
+                Reload
               </Button>
               <Blockies seed={account} />
             </Grid>

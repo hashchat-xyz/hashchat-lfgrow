@@ -40,7 +40,13 @@ interface Outbox {
   key: Uint8Array;
 }
 
-export function MessageList({ thread }: { thread: Thread }) {
+export function MessageList({
+  thread,
+  setSelectedThread,
+}: {
+  thread: Thread;
+  setSelectedThread: any;
+}) {
   const { account } = useWeb3React();
   const { selfID, ethProvider, web3Provider } = useSelfID();
   const [messages, setMessages] = useState([] as Message[]);
@@ -201,7 +207,7 @@ export function MessageList({ thread }: { thread: Thread }) {
 
       await postToOutbox(account!, thread.threadId);
 
-      window.location.reload();
+      setSelectedThread({} as Thread);
     }
   };
 
