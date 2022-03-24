@@ -16,6 +16,7 @@ import {
   generateLitAuthSig,
   getInbox,
   CHAIN,
+  encryptAndAddMessageToCollection,
 } from "../src/utils";
 import LitJsSdk from "lit-js-sdk";
 import { useWeb3React } from "@web3-react/core";
@@ -25,25 +26,43 @@ import Fab from "@mui/material/Fab";
 import SendIcon from "@mui/icons-material/Send";
 import { Thread } from "../pages/chat";
 
+interface Message {
+  from: string;
+  message: Record<string, any>;
+}
+
+interface Outbox {
+  collection: Collection;
+  key: Uint8Array;
+}
+
 export function MessageList({ thread }: { thread: Thread }) {
   const { account } = useWeb3React();
   const { selfID, ethProvider, web3Provider } = useSelfID();
-  const [messages, setMessages] = useState([] as any[]);
+  const [messages, setMessages] = useState([] as Message[]);
   const [showSendBox, setShowSendBox] = useState(false);
+  const [isSending, setSending] = useState(false);
+  const [newMessage, setNewMessage] = useState("");
+  const [outbox, setOutbox] = useState({} as Outbox);
+
+  const isReady = thread.threadId && selfID.client;
 
   useEffect(() => {
     setShowSendBox(false);
     setMessages([]);
 
     const readThread = async () => {
-      if (thread.threadId && selfID.client) {
+      if (isReady) {
         const litNodeClient = new LitJsSdk.LitNodeClient();
 
         const authSig = await generateLitAuthSig(web3Provider.provider);
         await litNodeClient.connect();
 
+        let allBoxes = thread.inbox;
+        allBoxes.push(thread.outbox);
+
         const cleartextMsgs = await Promise.all(
-          thread.inbox.map(async (inboxId): Promise<Record<string, any>> => {
+          allBoxes.map(async (inboxId): Promise<Message[]> => {
             const litStream = await TileDocument.load(
               selfID.client.ceramic,
               inboxId
@@ -72,11 +91,21 @@ export function MessageList({ thread }: { thread: Thread }) {
               streamIdContainer.threadStreamId
             );
 
+            if (litStream.controllers[0] === selfID.did.id) {
+              setOutbox({
+                collection: collection as Collection,
+                key: symmetricKey,
+              });
+            }
+
             const encryptedMsgs = await collection.getFirstN(5);
 
             return await Promise.all(
-              encryptedMsgs.map(async (item: any) => {
-                return await decryptMsg(item.value, symmetricKey);
+              encryptedMsgs.map(async (item: any): Promise<Message> => {
+                return {
+                  from: litStream.controllers[0],
+                  message: await decryptMsg(item.value, symmetricKey),
+                };
               })
             );
           })
@@ -90,6 +119,20 @@ export function MessageList({ thread }: { thread: Thread }) {
     readThread();
   }, [thread, selfID]);
 
+  const sendMessage = async () => {
+    setSending(true);
+
+    if (isReady) {
+      await encryptAndAddMessageToCollection(
+        outbox.collection,
+        newMessage,
+        outbox.key
+      );
+    }
+
+    setSending(false);
+  };
+
   return (
     <Grid item xs={9}>
       <List>
@@ -98,14 +141,14 @@ export function MessageList({ thread }: { thread: Thread }) {
             <Grid container>
               <Grid item xs={12}>
                 <ListItemText
-                  style={{ display: "flex", justifyContent: "flex-end" }}
-                  primary={message.text}
-                ></ListItemText>
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText
-                  style={{ display: "flex", justifyContent: "flex-end" }}
-                  secondary="09:30"
+                  style={{
+                    display: "flex",
+                    justifyContent:
+                      message.from === selfID.did.id
+                        ? "flex-start"
+                        : "flex-end",
+                  }}
+                  primary={message.message.text}
                 ></ListItemText>
               </Grid>
             </Grid>
@@ -120,10 +163,19 @@ export function MessageList({ thread }: { thread: Thread }) {
               id="outlined-basic-email"
               label="Type Something"
               fullWidth
+              disabled={isSending || !isReady}
+              onChange={(event) => {
+                setNewMessage(event.target.value);
+              }}
             />
           </Grid>
           <Grid xs={1} style={{ display: "flex", justifyContent: "flex-end" }}>
-            <Fab color="primary" aria-label="add">
+            <Fab
+              color="primary"
+              aria-label="add"
+              disabled={isSending || !isReady || newMessage.length == 0}
+              onClick={() => sendMessage()}
+            >
               {/*Send Icon needs to be functional.*/}
               <SendIcon />
             </Fab>
