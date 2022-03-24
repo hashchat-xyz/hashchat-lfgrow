@@ -26,8 +26,9 @@ import {
 } from "@cbj/ceramic-append-collection";
 import Fab from "@mui/material/Fab";
 import SendIcon from "@mui/icons-material/Send";
+import { Thread } from "../pages/chat";
 
-export function MessageList({ threadId }: { threadId: string }) {
+export function MessageList({ thread }: { thread: Thread }) {
   const { account } = useWeb3React();
   const { selfID, ethProvider, web3Provider } = useSelfID();
   const [messages, setMessages] = useState([] as any[]);
@@ -38,15 +39,15 @@ export function MessageList({ threadId }: { threadId: string }) {
     setMessages([]);
 
     const readThread = async () => {
-      if (threadId) {
+      if (thread.streamId && selfID.client) {
         const litNodeClient = new LitJsSdk.LitNodeClient();
 
         const authSig = await generateLitAuthSig(web3Provider.provider);
         await litNodeClient.connect();
-
+        
         const litStream = await TileDocument.load(
           selfID.client.ceramic,
-          threadId
+          thread.streamId
         );
         const litStreamContent = litStream.content as any;
 
@@ -84,7 +85,7 @@ export function MessageList({ threadId }: { threadId: string }) {
     };
 
     readThread();
-  }, [threadId]);
+  }, [thread, selfID]);
 
   return (
     <Grid item xs={9}>
