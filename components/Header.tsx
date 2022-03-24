@@ -29,14 +29,16 @@ export function Header() {
                 variant="contained"
                 size="small"
               >
-                {account}
+                {account.slice(0, 5)}
+                ...
+                {account.slice(38, 42)}
               </Button>
               <Button
                 variant={"text"}
                 size={"small"}
                 onClick={() => toggleColorMode()}
               >
-                <img src="/theme-emoji.png" width={25} />
+                <img src="/theme-emoji.png" width={30} />
               </Button>
               <Blockies seed={account} />
             </Grid>
