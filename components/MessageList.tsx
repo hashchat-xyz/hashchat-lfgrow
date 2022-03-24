@@ -135,58 +135,64 @@ export function MessageList({
 
         let allBoxes = [...thread.inbox, thread.outbox];
 
-        const cleartextMsgs = await Promise.all(
-          allBoxes.map(async (inboxId): Promise<Message[]> => {
-            const litStream = await TileDocument.load(
-              selfID.client.ceramic,
-              inboxId
-            );
+        const cleartextMsgs = (
+          await Promise.all(
+            allBoxes.map(async (inboxId): Promise<Message[]> => {
+              const litStream = await TileDocument.load(
+                selfID.client.ceramic,
+                inboxId
+              );
 
-            const litStreamContent = litStream.content as any;
+              const litStreamContent = litStream.content as any;
 
-            const symmetricKey: Uint8Array =
-              await litNodeClient.getEncryptionKey({
-                accessControlConditions:
-                  litStreamContent.accessControlConditions,
-                toDecrypt: LitJsSdk.uint8arrayToString(
-                  decodeb64(litStreamContent.encryptedSymmetricKey),
-                  "base16"
-                ),
-                chain: CHAIN,
-                authSig,
-              });
+              const symmetricKey: Uint8Array =
+                await litNodeClient.getEncryptionKey({
+                  accessControlConditions:
+                    litStreamContent.accessControlConditions,
+                  toDecrypt: LitJsSdk.uint8arrayToString(
+                    decodeb64(litStreamContent.encryptedSymmetricKey),
+                    "base16"
+                  ),
+                  chain: CHAIN,
+                  authSig,
+                });
 
-            const streamIdContainer = await decryptMsg(
-              litStreamContent.encryptedStreamId,
-              symmetricKey
-            );
+              const streamIdContainer = await decryptMsg(
+                litStreamContent.encryptedStreamId,
+                symmetricKey
+              );
 
-            const collection = await AppendCollection.load(
-              selfID.client.ceramic,
-              streamIdContainer.threadStreamId
-            );
+              const collection = await AppendCollection.load(
+                selfID.client.ceramic,
+                streamIdContainer.threadStreamId
+              );
 
-            if (litStream.controllers[0] === selfID.did.id) {
-              setOutbox({
-                collection: collection as Collection,
-                key: symmetricKey,
-              });
-            }
+              if (litStream.controllers[0] === selfID.did.id) {
+                setOutbox({
+                  collection: collection as Collection,
+                  key: symmetricKey,
+                });
+              }
 
-            const encryptedMsgs = await collection.getFirstN(5);
+              const encryptedMsgs = await collection.getFirstN(5);
 
-            return await Promise.all(
-              encryptedMsgs.map(async (item: any): Promise<Message> => {
-                return {
-                  from: litStream.controllers[0],
-                  message: await decryptMsg(item.value, symmetricKey),
-                };
-              })
-            );
-          })
-        );
+              return await Promise.all(
+                encryptedMsgs.map(async (item: any): Promise<Message> => {
+                  return {
+                    from: litStream.controllers[0],
+                    message: await decryptMsg(item.value, symmetricKey),
+                  };
+                })
+              );
+            })
+          )
+        ).flat();
 
-        setMessages(cleartextMsgs.flat());
+        cleartextMsgs.sort((a, b) => {
+          return a.message.timestamp - b.message.timestamp;
+        });
+
+        setMessages(cleartextMsgs);
         setShowSendBox(true);
       }
     };
@@ -226,6 +232,18 @@ export function MessageList({
                         : "flex-end",
                   }}
                   primary={message.message.text}
+                ></ListItemText>
+              </Grid>
+              <Grid item xs={12}>
+                <ListItemText
+                  style={{
+                    display: "flex",
+                    justifyContent:
+                      message.from === selfID.did.id
+                        ? "flex-start"
+                        : "flex-end",
+                  }}
+                  secondary={new Date(message.message.timestamp).toTimeString()}
                 ></ListItemText>
               </Grid>
             </Grid>
