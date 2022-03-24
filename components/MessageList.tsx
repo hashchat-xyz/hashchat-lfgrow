@@ -131,9 +131,9 @@ export function MessageList({ thread }: { thread: Thread }) {
       );
 
       await postToOutbox(account!, thread.threadId);
-    }
 
-    setSending(false);
+      window.location.reload();
+    }
   };
 
   return (
