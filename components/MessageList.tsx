@@ -133,8 +133,7 @@ export function MessageList({
           );
         }
 
-        let allBoxes = thread.inbox;
-        allBoxes.push(thread.outbox);
+        let allBoxes = [...thread.inbox, thread.outbox];
 
         const cleartextMsgs = await Promise.all(
           allBoxes.map(async (inboxId): Promise<Message[]> => {

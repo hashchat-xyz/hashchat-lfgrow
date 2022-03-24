@@ -115,7 +115,9 @@ export function ThreadList({
                 let record = prev[threadId];
                 if (record) {
                   record.threadId = threadId;
-                  record.inbox.push(stream.id);
+                  if (!record.inbox.includes(stream.id)) {
+                    record.inbox.push(stream.id);
+                  }
                   prev[threadId] = record;
                 } else {
                   const outbox = await TileDocument.deterministic(
