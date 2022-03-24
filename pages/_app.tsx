@@ -13,7 +13,7 @@ function getLibrary(provider: any, connector: any) {
 }
 
 function App({ Component, pageProps }: AppProps) {
-  const [mode, setMode] = useState<PaletteMode>("light");
+  const [mode, setMode] = useState<PaletteMode>("dark");
   const colorMode = useMemo(
     () => ({
       // The dark mode switch would invoke this method
