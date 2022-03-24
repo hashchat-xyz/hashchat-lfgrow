@@ -17,7 +17,7 @@ export function Header() {
     <Grid>
       <Grid container item xs={12} component={Paper} padding={5}>
         <Grid item xs={3}>
-          <Typography variant="h4">Hashchat</Typography>
+          <Typography variant="h3">Hashchat</Typography>
         </Grid>
         <Grid item xs={9} textAlign="right" spacing={2}>
           {active && account ? (
@@ -32,11 +32,11 @@ export function Header() {
                 {account}
               </Button>
               <Button
-                variant={"contained"}
+                variant={"text"}
                 size={"small"}
                 onClick={() => toggleColorMode()}
               >
-                Change Theme
+                <img src="/theme-emoji.png" width={25} />
               </Button>
               <Blockies seed={account} />
             </Grid>
