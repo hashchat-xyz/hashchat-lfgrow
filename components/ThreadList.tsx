@@ -16,13 +16,13 @@ import {
   decryptMsg,
   generateLitAuthSig,
   getInbox,
+  getOutbox,
 } from "../src/utils";
 import LitJsSdk from "lit-js-sdk";
 import { useWeb3React } from "@web3-react/core";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
 import { TileLoader } from "@glazed/tile-loader";
-
-const CHAIN = "polygon";
+import { Thread } from "../pages/chat";
 
 export function ThreadList({
   selectedThread,
@@ -33,32 +33,107 @@ export function ThreadList({
 }) {
   const { account } = useWeb3React();
   const { selfID, ethProvider, web3Provider } = useSelfID();
-  const [inbox, setInbox] = useState([] as any[]);
+  const [inbox, setInbox] = useState([] as Thread[]);
 
   useEffect(() => {
     const readInbox = async () => {
       if (selfID != null && selfID.client != null && account) {
         const litNodeClient = new LitJsSdk.LitNodeClient();
 
-        const authSig = await generateLitAuthSig(web3Provider.provider);
+        await generateLitAuthSig(web3Provider.provider);
         await litNodeClient.connect();
 
         const _inbox = await getInbox(account);
+        const _outbox = await getOutbox(account);
 
         const loader = new TileLoader({ ceramic: selfID.client.ceramic });
 
-        const _inboxWithMsgs = (
+        const _outboxWithMsgs = (
           await Promise.all(
-            _inbox.map((streamId) => {
-              return loader.load(streamId);
+            _outbox.map(async (threadId) => {
+              const outbox = await TileDocument.deterministic(
+                selfID.client.ceramic,
+                {
+                  controllers: [selfID.did.id],
+                  family: "hashchat:lit",
+                  tags: [threadId],
+                }
+              );
+
+              return loader.load(outbox.id);
             })
           )
-        ).map((stream) => {
-          return {
-            threadId: stream.id,
-            from: stream.controllers[0],
-          };
-        });
+        )
+          .map((stream) => {
+            return {
+              threadId: stream.metadata.tags![0],
+              inbox: [],
+              outbox: stream.id,
+            };
+          })
+          .reduce(
+            (
+              prev: Record<string, Thread>,
+              thread: Thread
+            ): Record<string, Thread> => {
+              let record = prev[thread.threadId];
+              if (!record) {
+                prev[thread.threadId] = thread;
+              }
+              return prev;
+            },
+            {} as Record<string, Thread>
+          );
+
+        const _inboxWithMsgs = Object.values(
+          await (
+            await Promise.all(
+              _inbox.map((streamId) => {
+                return loader.load(streamId);
+              })
+            )
+          )
+            .filter((stream) => {
+              return (
+                stream.metadata.family === "hashchat:lit" &&
+                stream.metadata.tags &&
+                stream.metadata.tags.length > 0
+              );
+            })
+            .reduce(
+              async (
+                prevP: Promise<Record<string, Thread>>,
+                stream: TileDocument<Record<string, any>>
+              ): Promise<Record<string, Thread>> => {
+                const prev = await prevP;
+                const threadId = stream.metadata.tags![0];
+                let record = prev[threadId];
+                if (record) {
+                  record.threadId = threadId;
+                  record.inbox.push(stream.id);
+                  prev[threadId] = record;
+                } else {
+                  const outbox = await TileDocument.deterministic(
+                    selfID.client.ceramic,
+                    {
+                      controllers: [selfID.did.id],
+                      family: "hashchat:lit",
+                      tags: [threadId],
+                    }
+                  );
+
+                  prev[threadId] = {
+                    threadId: threadId,
+                    inbox: [stream.id],
+                    outbox: outbox.id,
+                  };
+                }
+                return prev;
+              },
+              Promise.resolve(_outboxWithMsgs)
+            )
+        );
+
         setInbox(_inboxWithMsgs);
       }
     };
@@ -81,17 +156,17 @@ export function ThreadList({
         {inbox
           .map((thread, i) => (
             <ListItemButton
-              selected={selectedThread === thread.threadId}
+              selected={selectedThread.threadId === thread.threadId}
               key={i}
               onClick={() => {
-                setSelectedThread(thread.threadId);
+                setSelectedThread(thread);
               }}
             >
               <ListItemIcon>
-                <Blockies seed={thread.from} />
+                <Blockies seed={thread.threadId} />
               </ListItemIcon>
-              <ListItemText primary={thread.from.toString().slice(-10)}>
-                {thread.from}
+              <ListItemText primary={thread.threadId.toString().slice(-10)}>
+                {thread.threadId}
               </ListItemText>
             </ListItemButton>
           ))

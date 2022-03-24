@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
-import { EthereumAuthProvider, SelfID } from "@self.id/web";
+import { EthereumAuthProvider, SelfID, WebClient } from "@self.id/web";
 import { Web3Provider } from "@ethersproject/providers";
 
 export function useSelfID() {
@@ -20,10 +20,13 @@ export function useSelfID() {
         );
         setEthProvider(_provider);
 
-        const _selfID = await SelfID.authenticate({
-          authProvider: _provider,
+        const webClient = new WebClient({
           ceramic: "testnet-clay",
-          connectNetwork: "testnet-clay",
+        });
+        await webClient.authenticate(_provider);
+
+        const _selfID = new SelfID({
+          client: webClient,
         });
         setSelfID(_selfID);
       };

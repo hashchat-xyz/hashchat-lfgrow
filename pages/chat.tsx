@@ -10,12 +10,19 @@ import { useWeb3React } from "@web3-react/core";
 import { useSelfID } from "../src/hooks";
 import CssBaseline from "@mui/material/CssBaseline";
 import Overlay from "../components/Overlay";
+import { StreamID } from '@ceramicnetwork/streamid';
+
+export interface Thread {
+  threadId: string;
+  inbox: StreamID[];
+  outbox: StreamID;
+}
 
 export function Chat() {
   const { active } = useWeb3React();
   const router = useRouter();
   const { selfID } = useSelfID();
-  const [selectedThread, setSelectedThread] = useState("");
+  const [selectedThread, setSelectedThread] = useState({} as Thread);
 
   useEffect(() => {
     if (!active) {
@@ -36,7 +43,7 @@ export function Chat() {
             selectedThread={selectedThread}
             setSelectedThread={setSelectedThread}
           ></ThreadList>
-          <MessageList threadId={selectedThread}></MessageList>
+          <MessageList thread={selectedThread}></MessageList>
         </Grid>
       ) : null}
     </>
