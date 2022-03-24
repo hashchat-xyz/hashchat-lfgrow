@@ -84,7 +84,10 @@ export default function Overlay() {
       }
     )) as Collection;
 
-    const accessControlConditions = setAccessControlConditions(toAddr);
+    const accessControlConditions = setAccessControlConditions(
+      account!,
+      toAddr
+    );
     const { encryptedString, symmetricKey } = await LitJsSdk.encryptString("");
     // Encrypt collection stream ID using dag-jose
     const encryptedStreamId = await encryptMsg(

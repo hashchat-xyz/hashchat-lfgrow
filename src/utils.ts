@@ -14,7 +14,7 @@ import axios from "axios";
 export const CHAIN = "polygon";
 const WORKER_ENDPOINT = "https://hashchat-worker.codynhat.workers.dev";
 
-export function setAccessControlConditions(toAddr: string) {
+export function setAccessControlConditions(fromAddr: string, toAddr: string) {
   return [
     {
       contractAddress: "",
@@ -25,6 +25,18 @@ export function setAccessControlConditions(toAddr: string) {
       returnValueTest: {
         comparator: "=",
         value: toAddr,
+      },
+    },
+    { operator: "or" },
+    {
+      contractAddress: "",
+      standardContractType: "",
+      chain: CHAIN,
+      method: "",
+      parameters: [":userAddress"],
+      returnValueTest: {
+        comparator: "=",
+        value: fromAddr,
       },
     },
   ];
