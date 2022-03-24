@@ -122,6 +122,7 @@ export default function Overlay() {
     await postToInbox(toAddr, _streamId);
     await postToOutbox(account!, `hashchat:lit:${strHashOfKey}`);
 
+    console.log("Lit Stream: ", doc.id.toString());
     console.log("Collection: ", collection.id.toString());
 
     setCreating(false);

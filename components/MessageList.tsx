@@ -18,6 +18,9 @@ import {
   CHAIN,
   encryptAndAddMessageToCollection,
   postToOutbox,
+  encryptMsg,
+  encodeb64,
+  postToInbox,
 } from "../src/utils";
 import LitJsSdk from "lit-js-sdk";
 import { useWeb3React } from "@web3-react/core";
@@ -59,6 +62,71 @@ export function MessageList({ thread }: { thread: Thread }) {
         const authSig = await generateLitAuthSig(web3Provider.provider);
         await litNodeClient.connect();
 
+        const outboxLitStream = await TileDocument.load(
+          selfID.client.ceramic,
+          thread.outbox
+        );
+
+        if (outboxLitStream.allCommitIds.length == 1) {
+          // Create outbox
+          console.log("Creating outbox...");
+
+          // Load existing inbox
+          const inboxLitStream = await TileDocument.load(
+            selfID.client.ceramic,
+            thread.inbox[0]
+          );
+          const litStreamContent = inboxLitStream.content as any;
+
+          const collection: Collection = (await AppendCollection.create(
+            selfID.client.ceramic,
+            {
+              sliceMaxItems: 256,
+            }
+          )) as Collection;
+
+          const symmetricKey: Uint8Array = await litNodeClient.getEncryptionKey(
+            {
+              accessControlConditions: litStreamContent.accessControlConditions,
+              toDecrypt: LitJsSdk.uint8arrayToString(
+                decodeb64(litStreamContent.encryptedSymmetricKey),
+                "base16"
+              ),
+              chain: CHAIN,
+              authSig,
+            }
+          );
+
+          const encryptedStreamId = await encryptMsg(
+            { threadStreamId: collection.id.toString() },
+            symmetricKey
+          );
+
+          await outboxLitStream.update({
+            accessControlConditions: litStreamContent.accessControlConditions,
+            encryptedSymmetricKey: litStreamContent.encryptedSymmetricKey,
+            encryptedStreamId: encryptedStreamId,
+          });
+
+          console.log("Outbox created at " + outboxLitStream.id.toString());
+
+          // Post to outboxes
+          await Promise.all(
+            litStreamContent.accessControlConditions.map(async (cond: any) => {
+              if (
+                cond.returnValueTest &&
+                cond.returnValueTest.value.toLowerCase() !=
+                  account?.toLowerCase()
+              ) {
+                await postToInbox(
+                  cond.returnValueTest.value,
+                  outboxLitStream.id.toString()
+                );
+              }
+            })
+          );
+        }
+
         let allBoxes = thread.inbox;
         allBoxes.push(thread.outbox);
 
@@ -68,6 +136,7 @@ export function MessageList({ thread }: { thread: Thread }) {
               selfID.client.ceramic,
               inboxId
             );
+
             const litStreamContent = litStream.content as any;
 
             const symmetricKey: Uint8Array =
