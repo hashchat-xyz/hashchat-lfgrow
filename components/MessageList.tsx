@@ -20,10 +20,7 @@ import {
 import LitJsSdk from "lit-js-sdk";
 import { useWeb3React } from "@web3-react/core";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
-import {
-  AppendCollection,
-  Collection,
-} from "@cbj/ceramic-append-collection";
+import { AppendCollection, Collection } from "@cbj/ceramic-append-collection";
 import Fab from "@mui/material/Fab";
 import SendIcon from "@mui/icons-material/Send";
 import { Thread } from "../pages/chat";
@@ -39,47 +36,53 @@ export function MessageList({ thread }: { thread: Thread }) {
     setMessages([]);
 
     const readThread = async () => {
-      if (thread.streamId && selfID.client) {
+      if (thread.threadId && selfID.client) {
         const litNodeClient = new LitJsSdk.LitNodeClient();
 
         const authSig = await generateLitAuthSig(web3Provider.provider);
         await litNodeClient.connect();
-        
-        const litStream = await TileDocument.load(
-          selfID.client.ceramic,
-          thread.streamId
-        );
-        const litStreamContent = litStream.content as any;
-
-        const symmetricKey: Uint8Array = await litNodeClient.getEncryptionKey({
-          accessControlConditions: litStreamContent.accessControlConditions,
-          toDecrypt: LitJsSdk.uint8arrayToString(
-            decodeb64(litStreamContent.encryptedSymmetricKey),
-            "base16"
-          ),
-          chain: CHAIN,
-          authSig,
-        });
-
-        const streamIdContainer = await decryptMsg(
-          litStreamContent.encryptedStreamId,
-          symmetricKey
-        );
-
-        const collection = await AppendCollection.load(
-          selfID.client.ceramic,
-          streamIdContainer.threadStreamId
-        );
-
-        const encryptedMsgs = await collection.getFirstN(5);
 
         const cleartextMsgs = await Promise.all(
-          encryptedMsgs.map(async (item: any) => {
-            return await decryptMsg(item.value, symmetricKey);
+          thread.inbox.map(async (inboxId): Promise<Record<string, any>> => {
+            const litStream = await TileDocument.load(
+              selfID.client.ceramic,
+              inboxId
+            );
+            const litStreamContent = litStream.content as any;
+
+            const symmetricKey: Uint8Array =
+              await litNodeClient.getEncryptionKey({
+                accessControlConditions:
+                  litStreamContent.accessControlConditions,
+                toDecrypt: LitJsSdk.uint8arrayToString(
+                  decodeb64(litStreamContent.encryptedSymmetricKey),
+                  "base16"
+                ),
+                chain: CHAIN,
+                authSig,
+              });
+
+            const streamIdContainer = await decryptMsg(
+              litStreamContent.encryptedStreamId,
+              symmetricKey
+            );
+
+            const collection = await AppendCollection.load(
+              selfID.client.ceramic,
+              streamIdContainer.threadStreamId
+            );
+
+            const encryptedMsgs = await collection.getFirstN(5);
+
+            return await Promise.all(
+              encryptedMsgs.map(async (item: any) => {
+                return await decryptMsg(item.value, symmetricKey);
+              })
+            );
           })
         );
 
-        setMessages(cleartextMsgs);
+        setMessages(cleartextMsgs.flat());
         setShowSendBox(true);
       }
     };
@@ -110,21 +113,23 @@ export function MessageList({ thread }: { thread: Thread }) {
         ))}
       </List>
       <Divider />
-      {showSendBox ? <Grid container style={{ padding: "20px" }}>
-        <Grid item xs={11}>
-          <TextField
-            id="outlined-basic-email"
-            label="Type Something"
-            fullWidth
-          />
+      {showSendBox ? (
+        <Grid container style={{ padding: "20px" }}>
+          <Grid item xs={11}>
+            <TextField
+              id="outlined-basic-email"
+              label="Type Something"
+              fullWidth
+            />
+          </Grid>
+          <Grid xs={1} style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Fab color="primary" aria-label="add">
+              {/*Send Icon needs to be functional.*/}
+              <SendIcon />
+            </Fab>
+          </Grid>
         </Grid>
-        <Grid xs={1} style={{ display: "flex", justifyContent: "flex-end" }}>
-          <Fab color="primary" aria-label="add">
-            {/*Send Icon needs to be functional.*/}
-            <SendIcon />
-          </Fab>
-        </Grid>
-      </Grid> : null}
+      ) : null}
     </Grid>
   );
 }

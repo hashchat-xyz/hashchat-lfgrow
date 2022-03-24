@@ -21,7 +21,7 @@ export function useSelfID() {
         setEthProvider(_provider);
 
         const webClient = new WebClient({
-          ceramic: "http://140.82.14.88:7007",
+          ceramic: "http://ceramic1.hashchat.xyz:7007",
           connectNetwork: "testnet-clay",
         });
         await webClient.authenticate(_provider);
