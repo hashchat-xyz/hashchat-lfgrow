@@ -45,11 +45,14 @@ export function Header() {
                   // disconnect();
                 }}
                 variant="contained"
-                size="large"
+                size="small"
               >
                 {account.slice(0, 5)}
                 ...
-                {account.slice(38, 42)}‏‏‎ ‎<Blockies seed={account}></Blockies>
+                {account.slice(38, 42)}
+              </Button>
+              <Button>
+                <Blockies seed={account}></Blockies>
               </Button>
             </Grid>
           ) : (
