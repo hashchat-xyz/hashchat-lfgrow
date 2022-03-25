@@ -51,7 +51,6 @@ export function Header() {
                 ...
                 {account.slice(38, 42)}
               </Button>
-              <Blockies seed={account} />
             </Grid>
           ) : (
             <Grid>
