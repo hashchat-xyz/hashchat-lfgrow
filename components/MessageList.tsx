@@ -228,8 +228,8 @@ export function MessageList({
                     display: "flex",
                     justifyContent:
                       message.from === selfID.did.id
-                        ? "flex-start"
-                        : "flex-end",
+                        ? "flex-end"
+                        : "flex-start",
                   }}
                   primary={message.message.text}
                 ></ListItemText>
@@ -240,8 +240,8 @@ export function MessageList({
                     display: "flex",
                     justifyContent:
                       message.from === selfID.did.id
-                        ? "flex-start"
-                        : "flex-end",
+                        ? "flex-end"
+                        : "flex-start",
                   }}
                   secondary={new Date(message.message.timestamp).toTimeString()}
                 ></ListItemText>
