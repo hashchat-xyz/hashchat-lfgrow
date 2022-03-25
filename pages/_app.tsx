@@ -22,8 +22,7 @@ function getLibrary(provider: any, connector: any) {
     );
 
     const webClient = new WebClient({
-      ceramic: "http://ceramic1.hashchat.xyz:7007",
-      connectNetwork: "testnet-clay",
+      ceramic: "testnet-clay",
     });
     await webClient.authenticate(_provider);
 

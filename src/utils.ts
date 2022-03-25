@@ -11,10 +11,13 @@ import {
 import { prepareCleartext, decodeCleartext } from "dag-jose-utils";
 import axios from "axios";
 
-export const CHAIN = "polygon";
+export const CHAIN = "mumbai";
 const WORKER_ENDPOINT = "https://hashchat-worker.codynhat.workers.dev";
 
-export function setAccessControlConditions(fromAddr: string, toAddr: string) {
+export function generateWalletAccessControlConditions(
+  fromAddr: string,
+  toAddr: string
+) {
   return [
     {
       contractAddress: "",
@@ -25,6 +28,37 @@ export function setAccessControlConditions(fromAddr: string, toAddr: string) {
       returnValueTest: {
         comparator: "=",
         value: toAddr,
+      },
+    },
+    { operator: "or" },
+    {
+      contractAddress: "",
+      standardContractType: "",
+      chain: CHAIN,
+      method: "",
+      parameters: [":userAddress"],
+      returnValueTest: {
+        comparator: "=",
+        value: fromAddr,
+      },
+    },
+  ];
+}
+
+export function generateLensAccessControlConditions(
+  fromAddr: string,
+  profileTokenId: string
+) {
+  return [
+    {
+      contractAddress: "0xd7B3481De00995046C7850bCe9a5196B7605c367",
+      standardContractType: "ERC721",
+      chain: CHAIN,
+      method: "ownerOf",
+      parameters: [parseInt(profileTokenId, 16).toString(10)],
+      returnValueTest: {
+        comparator: "=",
+        value: ":userAddress",
       },
     },
     { operator: "or" },

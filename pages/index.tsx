@@ -13,7 +13,7 @@ const Home: NextPage = () => {
     const start = async () => {
       if (active && library) {
         const web3Provider = (await library).web3Provider as Web3Provider;
-        const desiredChainIdHex = `0x${(137).toString(16)}`;
+        const desiredChainIdHex = `0x${(80001).toString(16)}`;
         await web3Provider.send("wallet_switchEthereumChain", [
           { chainId: desiredChainIdHex },
         ]);
