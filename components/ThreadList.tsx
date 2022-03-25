@@ -34,7 +34,7 @@ export function ThreadList({
   reloadTrigger: any;
 }) {
   const { account } = useWeb3React();
-  const { selfID, ethProvider, web3Provider } = useSelfID();
+  const { selfID, web3Provider } = useSelfID();
   const [inbox, setInbox] = useState([] as Thread[]);
 
   useEffect(() => {

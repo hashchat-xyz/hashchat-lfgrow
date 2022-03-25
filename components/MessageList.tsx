@@ -48,7 +48,7 @@ export function MessageList({
   setSelectedThread: any;
 }) {
   const { account } = useWeb3React();
-  const { selfID, ethProvider, web3Provider } = useSelfID();
+  const { selfID, web3Provider } = useSelfID();
   const [messages, setMessages] = useState([] as Message[]);
   const [showSendBox, setShowSendBox] = useState(false);
   const [isSending, setSending] = useState(false);

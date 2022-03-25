@@ -7,9 +7,36 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { useMemo, useState } from "react";
 import { PaletteMode } from "@mui/material";
 import { ColorModeContext } from "next-color-mode";
+import { EthereumAuthProvider, SelfID, WebClient } from "@self.id/web";
 
 function getLibrary(provider: any, connector: any) {
-  return new Web3Provider(provider);
+  const library = new Web3Provider(provider);
+
+  const build = async () => {
+    const web3Provider = library as Web3Provider;
+    const addresses = await web3Provider.listAccounts();
+
+    const _provider = await new EthereumAuthProvider(
+      web3Provider.provider,
+      addresses[0]
+    );
+
+    const webClient = new WebClient({
+      ceramic: "testnet-clay",
+    });
+    await webClient.authenticate(_provider);
+
+    const _selfID = new SelfID({
+      client: webClient,
+    });
+
+    return {
+      selfID: _selfID,
+      web3Provider: library as Web3Provider,
+    };
+  };
+
+  return build();
 }
 
 function App({ Component, pageProps }: AppProps) {
