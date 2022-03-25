@@ -216,6 +216,8 @@ export function MessageList({
       setSelectedThread({} as Thread);
       setSelectedThread(oldThread);
     }
+
+    setSending(false);
   };
 
   return (
