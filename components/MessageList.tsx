@@ -212,7 +212,9 @@ export function MessageList({
 
       await postToOutbox(account!, thread.threadId);
 
+      let oldThread = thread;
       setSelectedThread({} as Thread);
+      setSelectedThread(oldThread);
     }
   };
 
