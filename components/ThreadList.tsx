@@ -69,7 +69,6 @@ export function ThreadList({
           )
         )
           .map((stream) => {
-            console.log("Outbox: " + stream.id.toString());
             return {
               threadId: stream.metadata.tags![0],
               inbox: [],
