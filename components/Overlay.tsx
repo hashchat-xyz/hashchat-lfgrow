@@ -26,13 +26,14 @@ import { useWeb3React } from "@web3-react/core";
 
 export interface SimpleDialogProps {
   open: boolean;
+  setOpen: any;
   isCreating: boolean;
   onWalletAddress: (value: string) => void;
   onLensHandle: (value: string) => void;
 }
 
 function SimpleDialog(props: SimpleDialogProps) {
-  const { onWalletAddress, onLensHandle, isCreating, open } = props;
+  const { onWalletAddress, onLensHandle, setOpen, isCreating, open } = props;
   const [walletAddress, setWalletAddress] = React.useState("");
   const [lensHandle, setLensHandle] = React.useState("");
 
@@ -88,6 +89,20 @@ function SimpleDialog(props: SimpleDialogProps) {
             disabled={isCreating}
           >
             Enter
+          </Button>
+        </Grid>
+      </Grid>
+      <Grid container style={{ padding: "20px" }} alignItems={"center"}>
+        <Grid item xs={12}>
+          <Button
+            size="large"
+            variant="contained"
+            onClick={() => {
+              setOpen(false);
+            }}
+            disabled={isCreating}
+          >
+            Close
           </Button>
         </Grid>
       </Grid>
@@ -207,6 +222,7 @@ export default function Overlay({ reload }: { reload: any }) {
       </Button>
       <SimpleDialog
         open={open}
+        setOpen={setOpen}
         isCreating={isCreating}
         onWalletAddress={(value) => createThreadForWallet(value)}
         onLensHandle={(value) => createThreadForLens(value)}
