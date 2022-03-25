@@ -10,6 +10,7 @@ import Blockies from "react-blockies";
 import { SelfID } from "@self.id/web";
 import { useSelfID } from "../src/hooks";
 import { useEffect, useState } from "react";
+import { ChatBubble, Message as ChatMessage } from 'react-chat-ui';
 import {
   decodeb64,
   decryptMsg,
@@ -239,7 +240,13 @@ export function MessageList({
                         : "15px 15px 15px 0px",
                   }}
                   primary={message.message.text}
-                ></ListItemText>
+                >
+
+                </ListItemText>
+
+              </Grid>
+              <Grid>
+                <ChatBubble message = {new ChatMessage(0,message.message.text)} />
               </Grid>
               <Grid item xs={12}>
                 <ListItemText

@@ -19,7 +19,7 @@ export function Header({ reload }: { reload: any }) {
         <Grid item xs={3}>
           <Typography variant="h4">Hashchat</Typography>
         </Grid>
-        <Grid item xs={9} textAlign="right" spacing={2}>
+        <Grid item xs={9} textAlign="right" container spacing={2}>
           {active && account ? (
             <Grid>
               <Button
