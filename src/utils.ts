@@ -76,7 +76,7 @@ export async function encryptAndAddMessageToCollection(
   msg: string,
   key: Uint8Array
 ): Promise<Collection> {
-  const jwe = await encryptMsg({ text: msg }, key);
+  const jwe = await encryptMsg({ text: msg, timestamp: Date.now() }, key);
 
   await collection.insert(jwe);
 

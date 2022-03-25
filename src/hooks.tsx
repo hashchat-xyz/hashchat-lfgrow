@@ -4,40 +4,24 @@ import { EthereumAuthProvider, SelfID, WebClient } from "@self.id/web";
 import { Web3Provider } from "@ethersproject/providers";
 
 export function useSelfID() {
-  const { library } = useWeb3React();
+  const { library, active } = useWeb3React();
   const [selfID, setSelfID] = useState({} as SelfID);
-  const [ethProvider, setEthProvider] = useState({} as EthereumAuthProvider);
+  const [web3Provider, setWeb3Provider] = useState({} as Web3Provider);
 
   useEffect(() => {
-    if (library && !selfID.id) {
+    if (active && library && !selfID.id) {
       const build = async () => {
-        const web3Provider = library as Web3Provider;
-        const addresses = await web3Provider.listAccounts();
-
-        const _provider = await new EthereumAuthProvider(
-          web3Provider.provider,
-          addresses[0]
-        );
-        setEthProvider(_provider);
-
-        const webClient = new WebClient({
-          ceramic: "testnet-clay",
-        });
-        await webClient.authenticate(_provider);
-
-        const _selfID = new SelfID({
-          client: webClient,
-        });
-        setSelfID(_selfID);
+        const libraryP = await library;
+        setWeb3Provider(libraryP.web3Provider);
+        setSelfID(libraryP.selfID);
       };
 
       build();
     }
-  }, [library]);
+  }, [active]);
 
   return {
-    selfID: selfID,
-    web3Provider: library as Web3Provider,
-    ethProvider: ethProvider,
+    selfID,
+    web3Provider,
   };
 }

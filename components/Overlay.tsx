@@ -64,7 +64,7 @@ function SimpleDialog(props: SimpleDialogProps) {
   );
 }
 
-export default function Overlay() {
+export default function Overlay({ reload }: { reload: any }) {
   const [open, setOpen] = React.useState(false);
   const [isCreating, setCreating] = React.useState(false);
   const { selfID, web3Provider } = useSelfID();
@@ -122,10 +122,12 @@ export default function Overlay() {
     await postToInbox(toAddr, _streamId);
     await postToOutbox(account!, `hashchat:lit:${strHashOfKey}`);
 
+    console.log("Lit Stream: ", doc.id.toString());
     console.log("Collection: ", collection.id.toString());
 
     setCreating(false);
     setOpen(false);
+    reload();
   };
 
   const handleClickOpen = () => {
