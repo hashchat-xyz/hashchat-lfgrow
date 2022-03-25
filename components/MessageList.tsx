@@ -230,17 +230,10 @@ export function MessageList({
                 <ListItemText
                   style={{
                     display: "flex",
-                    padding: "12px",
                     justifyContent:
                       message.from === selfID.did.id
                         ? "flex-end"
                         : "flex-start",
-                    backgroundColor:
-                      message.from === selfID.did.id ? "#75DCFF" : "#5B4E46",
-                    borderRadius:
-                      message.from === selfID.did.id
-                        ? "15px 15px 0px 15px"
-                        : "15px 15px 15px 0px",
                   }}
                   primary={message.message.text}
                 ></ListItemText>
