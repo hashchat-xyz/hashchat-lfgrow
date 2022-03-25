@@ -13,7 +13,6 @@ function getLibrary(provider: any, connector: any) {
   const library = new Web3Provider(provider);
 
   const build = async () => {
-    console.log("BUILD");
     const web3Provider = library as Web3Provider;
     const addresses = await web3Provider.listAccounts();
 

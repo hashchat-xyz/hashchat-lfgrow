@@ -15,6 +15,7 @@ import {
   postToOutbox,
   generateWalletAccessControlConditions,
   generateLensAccessControlConditions,
+  getProfileRequest,
 } from "../src/utils";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
 import { AppendCollection, Collection } from "@cbj/ceramic-append-collection";
@@ -22,46 +23,6 @@ import { useSelfID } from "../src/hooks";
 import { sha256 } from "multiformats/hashes/sha2";
 import { base32 } from "multiformats/bases/base32";
 import { useWeb3React } from "@web3-react/core";
-import { gql } from "@apollo/client/core";
-import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client/core";
-
-const httpLink = new HttpLink({
-  uri: "https://api-mumbai.lens.dev",
-  fetch,
-});
-
-const apolloClient = new ApolloClient({
-  link: httpLink,
-  cache: new InMemoryCache(),
-});
-
-const GET_PROFILE = `
-  query($request: ProfileQueryRequest!) {
-    profiles(request: $request) {
-      items {
-        id
-        handle
-        ownedBy
-      }
-    }
-  }
-`;
-
-export interface ProfilesRequest {
-  profileIds?: string[];
-  ownedBy?: string;
-  handles?: string[];
-  whoMirroredPublicationId?: string;
-}
-
-const getProfileRequest = (request: ProfilesRequest) => {
-  return apolloClient.query({
-    query: gql(GET_PROFILE),
-    variables: {
-      request,
-    },
-  });
-};
 
 export interface SimpleDialogProps {
   open: boolean;
