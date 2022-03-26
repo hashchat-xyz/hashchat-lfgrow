@@ -10,6 +10,7 @@ import Blockies from "react-blockies";
 import { SelfID } from "@self.id/web";
 import { useSelfID } from "../src/hooks";
 import { useEffect, useState } from "react";
+import { ChatBubble, ChatFeed, Message as ChatMessage } from "react-chat-ui";
 import {
   decodeb64,
   decryptMsg,
@@ -18,6 +19,9 @@ import {
   CHAIN,
   encryptAndAddMessageToCollection,
   postToOutbox,
+  encryptMsg,
+  encodeb64,
+  postToInbox,
 } from "../src/utils";
 import LitJsSdk from "lit-js-sdk";
 import { useWeb3React } from "@web3-react/core";
@@ -37,9 +41,15 @@ interface Outbox {
   key: Uint8Array;
 }
 
-export function MessageList({ thread }: { thread: Thread }) {
+export function MessageList({
+  thread,
+  setSelectedThread,
+}: {
+  thread: Thread;
+  setSelectedThread: any;
+}) {
   const { account } = useWeb3React();
-  const { selfID, ethProvider, web3Provider } = useSelfID();
+  const { selfID, web3Provider } = useSelfID();
   const [messages, setMessages] = useState([] as Message[]);
   const [showSendBox, setShowSendBox] = useState(false);
   const [isSending, setSending] = useState(false);
@@ -59,60 +69,131 @@ export function MessageList({ thread }: { thread: Thread }) {
         const authSig = await generateLitAuthSig(web3Provider.provider);
         await litNodeClient.connect();
 
-        let allBoxes = thread.inbox;
-        allBoxes.push(thread.outbox);
-
-        const cleartextMsgs = await Promise.all(
-          allBoxes.map(async (inboxId): Promise<Message[]> => {
-            const litStream = await TileDocument.load(
-              selfID.client.ceramic,
-              inboxId
-            );
-            const litStreamContent = litStream.content as any;
-
-            const symmetricKey: Uint8Array =
-              await litNodeClient.getEncryptionKey({
-                accessControlConditions:
-                  litStreamContent.accessControlConditions,
-                toDecrypt: LitJsSdk.uint8arrayToString(
-                  decodeb64(litStreamContent.encryptedSymmetricKey),
-                  "base16"
-                ),
-                chain: CHAIN,
-                authSig,
-              });
-
-            const streamIdContainer = await decryptMsg(
-              litStreamContent.encryptedStreamId,
-              symmetricKey
-            );
-
-            const collection = await AppendCollection.load(
-              selfID.client.ceramic,
-              streamIdContainer.threadStreamId
-            );
-
-            if (litStream.controllers[0] === selfID.did.id) {
-              setOutbox({
-                collection: collection as Collection,
-                key: symmetricKey,
-              });
-            }
-
-            const encryptedMsgs = await collection.getFirstN(5);
-
-            return await Promise.all(
-              encryptedMsgs.map(async (item: any): Promise<Message> => {
-                return {
-                  from: litStream.controllers[0],
-                  message: await decryptMsg(item.value, symmetricKey),
-                };
-              })
-            );
-          })
+        const outboxLitStream = await TileDocument.load(
+          selfID.client.ceramic,
+          thread.outbox
         );
 
-        setMessages(cleartextMsgs.flat());
+        if (outboxLitStream.allCommitIds.length == 1) {
+          // Create outbox
+          console.log("Creating outbox...");
+
+          // Load existing inbox
+          const inboxLitStream = await TileDocument.load(
+            selfID.client.ceramic,
+            thread.inbox[0]
+          );
+          const litStreamContent = inboxLitStream.content as any;
+
+          const collection: Collection = (await AppendCollection.create(
+            selfID.client.ceramic,
+            {
+              sliceMaxItems: 256,
+            }
+          )) as Collection;
+
+          const symmetricKey: Uint8Array = await litNodeClient.getEncryptionKey(
+            {
+              accessControlConditions: litStreamContent.accessControlConditions,
+              toDecrypt: LitJsSdk.uint8arrayToString(
+                decodeb64(litStreamContent.encryptedSymmetricKey),
+                "base16"
+              ),
+              chain: CHAIN,
+              authSig,
+            }
+          );
+
+          const encryptedStreamId = await encryptMsg(
+            { threadStreamId: collection.id.toString() },
+            symmetricKey
+          );
+
+          await outboxLitStream.update({
+            accessControlConditions: litStreamContent.accessControlConditions,
+            encryptedSymmetricKey: litStreamContent.encryptedSymmetricKey,
+            encryptedStreamId: encryptedStreamId,
+          });
+
+          console.log("Outbox created at " + outboxLitStream.id.toString());
+
+          // Post to outboxes
+          await Promise.all(
+            litStreamContent.accessControlConditions.map(async (cond: any) => {
+              if (
+                cond.returnValueTest &&
+                cond.returnValueTest.value.toLowerCase() !=
+                  account?.toLowerCase()
+              ) {
+                await postToInbox(
+                  cond.returnValueTest.value,
+                  outboxLitStream.id.toString()
+                );
+              }
+            })
+          );
+        }
+
+        let allBoxes = [...thread.inbox, thread.outbox];
+
+        const cleartextMsgs = (
+          await Promise.all(
+            allBoxes.map(async (inboxId): Promise<Message[]> => {
+              const litStream = await TileDocument.load(
+                selfID.client.ceramic,
+                inboxId
+              );
+
+              const litStreamContent = litStream.content as any;
+
+              const symmetricKey: Uint8Array =
+                await litNodeClient.getEncryptionKey({
+                  accessControlConditions:
+                    litStreamContent.accessControlConditions,
+                  toDecrypt: LitJsSdk.uint8arrayToString(
+                    decodeb64(litStreamContent.encryptedSymmetricKey),
+                    "base16"
+                  ),
+                  chain: CHAIN,
+                  authSig,
+                });
+
+              const streamIdContainer = await decryptMsg(
+                litStreamContent.encryptedStreamId,
+                symmetricKey
+              );
+
+              const collection = await AppendCollection.load(
+                selfID.client.ceramic,
+                streamIdContainer.threadStreamId
+              );
+
+              if (litStream.controllers[0] === selfID.did.id) {
+                setOutbox({
+                  collection: collection as Collection,
+                  key: symmetricKey,
+                });
+              }
+
+              const encryptedMsgs = await collection.getFirstN(5);
+
+              return await Promise.all(
+                encryptedMsgs.map(async (item: any): Promise<Message> => {
+                  return {
+                    from: litStream.controllers[0],
+                    message: await decryptMsg(item.value, symmetricKey),
+                  };
+                })
+              );
+            })
+          )
+        ).flat();
+
+        cleartextMsgs.sort((a, b) => {
+          return a.message.timestamp - b.message.timestamp;
+        });
+
+        setMessages(cleartextMsgs);
         setShowSendBox(true);
       }
     };
@@ -132,32 +213,25 @@ export function MessageList({ thread }: { thread: Thread }) {
 
       await postToOutbox(account!, thread.threadId);
 
-      window.location.reload();
+      let oldThread = thread;
+      setSelectedThread({} as Thread);
+      setSelectedThread(oldThread);
     }
+
+    setSending(false);
   };
 
   return (
     <Grid item xs={9}>
-      <List>
-        {messages.map((message, i) => (
-          <ListItem key={i}>
-            <Grid container>
-              <Grid item xs={12}>
-                <ListItemText
-                  style={{
-                    display: "flex",
-                    justifyContent:
-                      message.from === selfID.did.id
-                        ? "flex-start"
-                        : "flex-end",
-                  }}
-                  primary={message.message.text}
-                ></ListItemText>
-              </Grid>
-            </Grid>
-          </ListItem>
-        ))}
-      </List>
+      <ChatFeed
+        messages={messages.map((message, i) => {
+          return new ChatMessage({
+            id: message.from === selfID.did.id ? 0 : 1,
+            senderName: message.from,
+            message: message.message.text,
+          });
+        })}
+      />
       <Divider />
       {showSendBox ? (
         <Grid container style={{ padding: "20px" }}>
