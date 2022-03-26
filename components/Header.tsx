@@ -15,13 +15,31 @@ export function Header({ reload }: { reload: any }) {
 
   return (
     <Grid>
-      <Grid container item xs={12} component={Paper} padding={5}>
+      <Grid
+        container
+        item
+        xs={12}
+        component={Paper}
+        padding={5}
+        justifyContent="center"
+        alignItems="center"
+      >
         <Grid item xs={3}>
-          <Typography variant="h4">Hashchat</Typography>
+          <Typography variant="h3">Hashchat</Typography>
         </Grid>
         <Grid item xs={9} textAlign="right" container spacing={2}>
           {active && account ? (
             <Grid>
+              <Button
+                variant={"text"}
+                size={"small"}
+                style={{ backgroundColor: "transparent" }}
+                disableElevation
+                disableRipple
+                onClick={() => toggleColorMode()}
+              >
+                <img src="/theme-emoji.png" width={30} />
+              </Button>
               <Button
                 onClick={() => {
                   // disconnect();
@@ -29,15 +47,14 @@ export function Header({ reload }: { reload: any }) {
                 variant="contained"
                 size="small"
               >
-                {account}
+                {account.slice(0, 5)}
+                ...
+                {account.slice(38, 42)}
               </Button>
-              <Button
-                variant={"contained"}
-                size={"small"}
-                onClick={() => toggleColorMode()}
-              >
-                Change Theme
+              <Button>
+                <Blockies seed={account}></Blockies>
               </Button>
+
               <Button
                 variant={"contained"}
                 size={"small"}
@@ -45,7 +62,6 @@ export function Header({ reload }: { reload: any }) {
               >
                 Reload
               </Button>
-              <Blockies seed={account} />
             </Grid>
           ) : (
             <Grid>
