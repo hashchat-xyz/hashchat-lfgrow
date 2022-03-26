@@ -16,6 +16,7 @@ import {
   decryptMsg,
   generateLitAuthSig,
   getInbox,
+  getLabelForThread,
   getOutbox,
 } from "../src/utils";
 import LitJsSdk from "lit-js-sdk";
@@ -52,42 +53,48 @@ export function ThreadList({
 
         const loader = new TileLoader({ ceramic: selfID.client.ceramic });
 
+        const _outboxP = await Promise.all(
+          _outbox.map(async (threadId) => {
+            const outbox = await TileDocument.deterministic(
+              selfID.client.ceramic,
+              {
+                controllers: [selfID.did.id],
+                family: "hashchat:lit",
+                tags: [threadId],
+              }
+            );
+
+            return loader.load(outbox.id);
+          })
+        );
+
         const _outboxWithMsgs = (
           await Promise.all(
-            _outbox.map(async (threadId) => {
-              const outbox = await TileDocument.deterministic(
-                selfID.client.ceramic,
-                {
-                  controllers: [selfID.did.id],
-                  family: "hashchat:lit",
-                  tags: [threadId],
-                }
-              );
-
-              return loader.load(outbox.id);
+            _outboxP.map(async (stream) => {
+              return {
+                threadId: stream.metadata.tags![0],
+                inbox: [],
+                outbox: stream.id,
+                label: await getLabelForThread(
+                  account,
+                  stream.content.accessControlConditions
+                ),
+              };
             })
           )
-        )
-          .map((stream) => {
-            return {
-              threadId: stream.metadata.tags![0],
-              inbox: [],
-              outbox: stream.id,
-            };
-          })
-          .reduce(
-            (
-              prev: Record<string, Thread>,
-              thread: Thread
-            ): Record<string, Thread> => {
-              let record = prev[thread.threadId];
-              if (!record) {
-                prev[thread.threadId] = thread;
-              }
-              return prev;
-            },
-            {} as Record<string, Thread>
-          );
+        ).reduce(
+          (
+            prev: Record<string, Thread>,
+            thread: Thread
+          ): Record<string, Thread> => {
+            let record = prev[thread.threadId];
+            if (!record) {
+              prev[thread.threadId] = thread;
+            }
+            return prev;
+          },
+          {} as Record<string, Thread>
+        );
 
         const _inboxWithMsgs = Object.values(
           await (
@@ -171,9 +178,7 @@ export function ThreadList({
               <ListItemIcon>
                 <Blockies seed={thread.threadId} />
               </ListItemIcon>
-              <ListItemText primary={thread.threadId.toString().slice(-10)}>
-                {thread.threadId}
-              </ListItemText>
+              <ListItemText primary={thread.label}>{thread.label}</ListItemText>
             </ListItemButton>
           ))
           .reverse()}
