@@ -120,6 +120,10 @@ export async function getLabelForThread(
   account: string,
   accessControlConditions: any
 ) {
+  if (!accessControlConditions) {
+    return "BAD";
+  }
+
   if (
     accessControlConditions[0].contractAddress ==
     "0xd7B3481De00995046C7850bCe9a5196B7605c367"
