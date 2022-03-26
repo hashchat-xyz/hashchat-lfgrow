@@ -62,8 +62,6 @@ export function Header({ reload }: { reload: any }) {
               >
                 Reload
               </Button>
-              <Blockies seed={account} />
-
             </Grid>
           ) : (
             <Grid>
