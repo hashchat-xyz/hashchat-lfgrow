@@ -47,7 +47,7 @@ function SimpleDialog(props: SimpleDialogProps) {
 
   return (
     <Dialog open={open}>
-      <DialogTitle>Paste a wallet address or Lens handle below.</DialogTitle>
+      <DialogTitle>To start a new Message Thread, Paste the 'to' wallet address or Lens handle below. (e.g. 0xd8da6bf26964af9d7eed9e03e53415d37aa96045 or hashchatlensdemo</DialogTitle>
       <Grid container style={{ padding: "20px" }} alignItems={"center"}>
         <Grid item xs={9}>
           <TextField
@@ -217,8 +217,8 @@ export default function Overlay({ reload }: { reload: any }) {
   return (
     <div>
       <br />
-      <Button variant="contained" color="secondary" onClick={handleClickOpen}>
-        Create Thread
+      <Button variant="contained" color="secondary" onClick={handleClickOpen} style={{textTransform: 'none'}}>
+        Send New Message
       </Button>
       <SimpleDialog
         open={open}

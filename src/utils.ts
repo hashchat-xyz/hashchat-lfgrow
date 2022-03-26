@@ -143,8 +143,8 @@ export async function getLabelForThread(
     // Wallet
     return accessControlConditions[0].returnValueTest.value.toLowerCase() ==
       account.toLowerCase()
-      ? accessControlConditions[2].returnValueTest.value.slice(0, 10)
-      : accessControlConditions[0].returnValueTest.value.slice(0, 10);
+      ? accessControlConditions[2].returnValueTest.value.slice(0, 5)+'...'+accessControlConditions[2].returnValueTest.value.slice(-5)
+      : accessControlConditions[0].returnValueTest.value.slice(0, 5)+'...'+accessControlConditions[0].returnValueTest.value.slice(-5);
   }
 }
 

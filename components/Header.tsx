@@ -27,7 +27,7 @@ export function Header({ reload }: { reload: any }) {
         <Grid item xs={3}>
           <Typography variant="h3">Hashchat</Typography>
         </Grid>
-        <Grid item xs={9} textAlign="right" container spacing={2}>
+        <Grid item xs={9} textAlign="right">
           {active && account ? (
             <Grid>
               <Button
@@ -41,15 +41,16 @@ export function Header({ reload }: { reload: any }) {
                 <img src="/theme-emoji.png" width={30} />
               </Button>
               <Button
+                style={{textTransform: 'none'}}
                 onClick={() => {
                   // disconnect();
                 }}
                 variant="contained"
                 size="small"
               >
-                {account.slice(0, 5)}
+                {account.slice(0,5)}
                 ...
-                {account.slice(38, 42)}
+                {account.slice(-5)}
               </Button>
               <Button>
                 <Blockies seed={account}></Blockies>
