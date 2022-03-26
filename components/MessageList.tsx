@@ -10,7 +10,7 @@ import Blockies from "react-blockies";
 import { SelfID } from "@self.id/web";
 import { useSelfID } from "../src/hooks";
 import { useEffect, useState } from "react";
-import { ChatBubble, Message as ChatMessage } from 'react-chat-ui';
+import { ChatBubble, ChatFeed, Message as ChatMessage } from "react-chat-ui";
 import {
   decodeb64,
   decryptMsg,
@@ -223,51 +223,15 @@ export function MessageList({
 
   return (
     <Grid item xs={9}>
-      <List>
-        {messages.map((message, i) => (
-          <ListItem key={i}>
-            <Grid container>
-              <Grid item xs={12}>
-                <ListItemText
-                  style={{
-                    display: "flex",
-                    padding: "12px",
-                    justifyContent:
-                      message.from === selfID.did.id
-                        ? "flex-end"
-                        : "flex-start",
-                    backgroundColor:
-                      message.from === selfID.did.id ? "#75DCFF" : "#5B4E46",
-                    borderRadius:
-                      message.from === selfID.did.id
-                        ? "15px 15px 0px 15px"
-                        : "15px 15px 15px 0px",
-                  }}
-                  primary={message.message.text}
-                >
-
-                </ListItemText>
-
-              </Grid>
-              <Grid>
-                <ChatBubble message = {new ChatMessage(0,message.message.text)} />
-              </Grid>
-              <Grid item xs={12}>
-                <ListItemText
-                  style={{
-                    display: "flex",
-                    justifyContent:
-                      message.from === selfID.did.id
-                        ? "flex-end"
-                        : "flex-start",
-                  }}
-                  secondary={new Date(message.message.timestamp).toTimeString()}
-                ></ListItemText>
-              </Grid>
-            </Grid>
-          </ListItem>
-        ))}
-      </List>
+      <ChatFeed
+        messages={messages.map((message, i) => {
+          return new ChatMessage({
+            id: message.from === selfID.did.id ? 0 : 1,
+            senderName: message.from,
+            message: message.message.text,
+          });
+        })}
+      />
       <Divider />
       {showSendBox ? (
         <Grid container style={{ padding: "20px" }}>
