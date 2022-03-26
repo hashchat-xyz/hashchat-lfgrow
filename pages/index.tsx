@@ -9,9 +9,13 @@ const Home: NextPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (active) {
-      router.push("/chat");
-    }
+    const start = async () => {
+      if (active) {
+        router.push("/chat");
+      }
+    };
+
+    start();
   }, [active]);
 
   return <Connect />;

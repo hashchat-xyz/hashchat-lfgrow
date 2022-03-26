@@ -16,6 +16,7 @@ export interface Thread {
   threadId: string;
   inbox: StreamID[];
   outbox: StreamID;
+  label?: string;
 }
 
 export function Chat() {

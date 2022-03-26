@@ -10,11 +10,54 @@ import {
 } from "did-jwt";
 import { prepareCleartext, decodeCleartext } from "dag-jose-utils";
 import axios from "axios";
+import { gql } from "@apollo/client/core";
+import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client/core";
 
-export const CHAIN = "polygon";
+const httpLink = new HttpLink({
+  uri: "https://api-mumbai.lens.dev",
+  fetch,
+});
+
+const apolloClient = new ApolloClient({
+  link: httpLink,
+  cache: new InMemoryCache(),
+});
+
+const GET_PROFILE = `
+  query($request: ProfileQueryRequest!) {
+    profiles(request: $request) {
+      items {
+        id
+        handle
+        ownedBy
+      }
+    }
+  }
+`;
+
+export interface ProfilesRequest {
+  profileIds?: string[];
+  ownedBy?: string;
+  handles?: string[];
+  whoMirroredPublicationId?: string;
+}
+
+export const getProfileRequest = (request: ProfilesRequest) => {
+  return apolloClient.query({
+    query: gql(GET_PROFILE),
+    variables: {
+      request,
+    },
+  });
+};
+
+export const CHAIN = "mumbai";
 const WORKER_ENDPOINT = "https://hashchat-worker.codynhat.workers.dev";
 
-export function setAccessControlConditions(fromAddr: string, toAddr: string) {
+export function generateWalletAccessControlConditions(
+  fromAddr: string,
+  toAddr: string
+) {
   return [
     {
       contractAddress: "",
@@ -40,6 +83,65 @@ export function setAccessControlConditions(fromAddr: string, toAddr: string) {
       },
     },
   ];
+}
+
+export function generateLensAccessControlConditions(
+  fromAddr: string,
+  profileTokenId: string
+) {
+  return [
+    {
+      contractAddress: "0xd7B3481De00995046C7850bCe9a5196B7605c367",
+      standardContractType: "ERC721",
+      chain: CHAIN,
+      method: "ownerOf",
+      parameters: [parseInt(profileTokenId, 16).toString(10)],
+      returnValueTest: {
+        comparator: "=",
+        value: ":userAddress",
+      },
+    },
+    { operator: "or" },
+    {
+      contractAddress: "",
+      standardContractType: "",
+      chain: CHAIN,
+      method: "",
+      parameters: [":userAddress"],
+      returnValueTest: {
+        comparator: "=",
+        value: fromAddr,
+      },
+    },
+  ];
+}
+
+export async function getLabelForThread(
+  account: string,
+  accessControlConditions: any
+) {
+  if (
+    accessControlConditions[0].contractAddress ==
+    "0xd7B3481De00995046C7850bCe9a5196B7605c367"
+  ) {
+    // Lens
+    const tokenId = accessControlConditions[0].parameters[0];
+    const profile = await getProfileRequest({
+      profileIds: [`0x0${parseInt(tokenId).toString(16)}`],
+    });
+    return profile.data.profiles.items[0].ownedBy.toLowerCase() ==
+      account.toLowerCase()
+      ? accessControlConditions[2].returnValueTest.value.slice(0, 10)
+      : profile.data.profiles.items[0].handle;
+  } else if (accessControlConditions[0].method == "ownerOf") {
+    return "BAD";
+  } else {
+    // Wallet
+    return accessControlConditions[0].returnValueTest.value.toLowerCase() ==
+      account.toLowerCase()
+      ? accessControlConditions[2].returnValueTest.value.slice(0, 10)
+      : accessControlConditions[0].returnValueTest.value.slice(0, 10);
+  }
 }
 
 export async function generateLitAuthSig(ethProvider: any): Promise<any> {

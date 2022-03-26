@@ -21,6 +21,42 @@ function getLibrary(provider: any, connector: any) {
       addresses[0]
     );
 
+    const switchNetwork = async () => {
+      try {
+        await provider.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0x13881" }],
+        });
+      } catch (switchError) {
+        // 4902 error code indicates the chain is missing on the wallet
+        if ((switchError as any).code === 4902) {
+          try {
+            await provider.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: "0x13881",
+                  rpcUrls: ["https://rpc-mumbai.matic.today"],
+                  chainName: "Mumbai Testnet",
+                  nativeCurrency: {
+                    name: "MATIC",
+                    decimals: 18,
+                    symbol: "MATIC",
+                  },
+                  blockExplorerUrls: ["https://explorer-mumbai.maticvigil.com"],
+                  iconUrls: [],
+                },
+              ],
+            });
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+    };
+
+    await switchNetwork();
+
     const webClient = new WebClient({
       ceramic: "testnet-clay",
     });
