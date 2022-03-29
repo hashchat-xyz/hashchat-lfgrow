@@ -139,6 +139,10 @@ export function ThreadList({
                     threadId: threadId,
                     inbox: [stream.id],
                     outbox: outbox.id,
+                    label: await getLabelForThread(
+                      account,
+                      stream.content.accessControlConditions
+                    ),
                   };
                 }
                 return prev;
