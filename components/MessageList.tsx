@@ -236,7 +236,7 @@ export function MessageList({
             text: {
               fontSize: 24,
               color: 'black',
-              fontWeight: '300',
+              fontWeight: '600',
             },
             chatbubble: {
               backgroundColor: 'yellow',
