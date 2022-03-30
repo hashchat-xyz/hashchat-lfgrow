@@ -238,7 +238,7 @@ export function MessageList({
             fontWeight: "500",
           },
           chatbubble: {
-            backgroundColor: "#C5C5C5",
+            backgroundColor: "#FFE77AFF",
             borderRadius: 18,
             padding: 12,
           },

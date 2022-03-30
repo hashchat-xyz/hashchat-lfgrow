@@ -223,7 +223,7 @@ export default function Overlay({ reload }: { reload: any }) {
       <br />
       <Button
         variant="contained"
-        color="primary"
+        color="secondary"
         onClick={handleClickOpen}
         style={{ textTransform: "none" }}
       >
