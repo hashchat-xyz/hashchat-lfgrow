@@ -238,12 +238,12 @@ export function MessageList({
             fontWeight: "500",
           },
           chatbubble: {
-            backgroundColor: "#ce93d8",
-            borderRadius: 30,
+            backgroundColor: "#C5C5C5",
+            borderRadius: 18,
             padding: 12,
           },
           userBubble: {
-            backgroundColor: "#90caf9",
+            backgroundColor: "limegreen",
           },
         }}
       />

@@ -11,6 +11,7 @@ import { useSelfID } from "../src/hooks";
 import CssBaseline from "@mui/material/CssBaseline";
 import Overlay from "../components/Overlay";
 import { StreamID } from "@ceramicnetwork/streamid";
+import { Divider } from "@mui/material";
 
 export interface Thread {
   threadId: string;
