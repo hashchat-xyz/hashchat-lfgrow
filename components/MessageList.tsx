@@ -231,23 +231,21 @@ export function MessageList({
             message: message.message.text,
           });
         })}
-        bubbleStyles={
-          {
-            text: {
-              fontSize: 24,
-              color: 'black',
-              fontWeight: '600',
-            },
-            chatbubble: {
-              backgroundColor: 'yellow',
-              borderRadius: 30,
-              padding: 20
-            },
-            userBubble: {
-              backgroundColor: 'lightgreen',
-            }
-          }
-        }
+        bubbleStyles={{
+          text: {
+            fontSize: 15,
+            color: "black",
+            fontWeight: "500",
+          },
+          chatbubble: {
+            backgroundColor: "#ce93d8",
+            borderRadius: 30,
+            padding: 12,
+          },
+          userBubble: {
+            backgroundColor: "#90caf9",
+          },
+        }}
       />
       <Divider />
       {showSendBox ? (
