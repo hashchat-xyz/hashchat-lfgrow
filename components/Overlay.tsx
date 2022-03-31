@@ -125,10 +125,15 @@ export default function Overlay({ reload }: { reload: any }) {
     inboxAddress: string
   ) => {
     const litNodeClient = new LitJsSdk.LitNodeClient();
-
+    console.time('createThread 1');
     await litNodeClient.connect();
+    console.timeEnd('createThread 1');
+
+    console.time('createThread 2');
 
     const { encryptedString, symmetricKey } = await LitJsSdk.encryptString("");
+    console.timeEnd('createThread 2');
+    console.time('createThread 3');
 
     const collection: Collection = (await AppendCollection.create(
       selfID.client.ceramic,
@@ -136,6 +141,8 @@ export default function Overlay({ reload }: { reload: any }) {
         sliceMaxItems: 256,
       }
     )) as Collection;
+    console.timeEnd('createThread 3');
+    console.time('createThread 4');
 
     // Encrypt collection stream ID using dag-jose
     const encryptedStreamId = await encryptMsg(
@@ -143,6 +150,8 @@ export default function Overlay({ reload }: { reload: any }) {
       symmetricKey
     );
     let authSig = await generateLitAuthSig(web3Provider.provider);
+    console.timeEnd('createThread 4');
+    console.time('createThread 5');
 
     const encryptedSymmetricKey = await litNodeClient.saveEncryptionKey({
       accessControlConditions,
@@ -150,15 +159,23 @@ export default function Overlay({ reload }: { reload: any }) {
       authSig,
       chain: CHAIN,
     });
+    console.timeEnd('createThread 5');
+    console.time('createThread 6');
 
     const hashOfKey = await sha256.digest(encryptedSymmetricKey);
+    console.timeEnd('createThread 6');
+    console.time('createThread 7');
     const strHashOfKey = base32.encode(hashOfKey.bytes).toString();
+    console.timeEnd('createThread 7');
+    console.time('createThread 8');
 
     const doc = await TileDocument.deterministic(selfID.client.ceramic, {
       controllers: [selfID.did.id],
       family: "hashchat:lit",
       tags: [`hashchat:lit:${strHashOfKey}`],
     });
+    console.timeEnd('createThread 8');
+    console.time('createThread 9');
 
     await doc.update({
       accessControlConditions: accessControlConditions,
@@ -166,9 +183,13 @@ export default function Overlay({ reload }: { reload: any }) {
       encryptedStreamId: encryptedStreamId,
     });
     const _streamId = doc.id.toString();
+    console.timeEnd('createThread 9');
+    console.time('createThread 10');
 
     await postToInbox(inboxAddress, _streamId);
     await postToOutbox(account!, `hashchat:lit:${strHashOfKey}`);
+    console.timeEnd('createThread 10');
+    console.time('createThread 11');
 
     console.log("Lit Stream: ", doc.id.toString());
     console.log("Collection: ", collection.id.toString());
@@ -176,6 +197,7 @@ export default function Overlay({ reload }: { reload: any }) {
     setCreating(false);
     setOpen(false);
     reload();
+    console.timeEnd('createThread 11');
   };
 
   const createThreadForWallet = async (toAddr: string) => {

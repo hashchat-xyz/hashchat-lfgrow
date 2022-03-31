@@ -261,7 +261,7 @@ export function MessageList({
               }}
             />
           </Grid>
-          <Grid xs={1} style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Grid item xs={1} style={{ display: "flex", justifyContent: "flex-end" }}>
             <Fab
               color="primary"
               aria-label="add"
