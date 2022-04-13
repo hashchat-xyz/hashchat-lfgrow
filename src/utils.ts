@@ -116,28 +116,44 @@ export function generateLensAccessControlConditions(
   ];
 }
 
+export function generateSolAccessControlConditions(
+  fromAddr: string,
+  solAddr: string
+) {
+  return [
+
+    {
+      conditionType: "solRpc",
+      method: "",
+      params: [":userAddress"],
+      chain: "solana",
+      returnValueTest: {
+        key: "",
+        comparator: "=",
+        value: solAddr,
+      },
+    },
+    { operator: "or" },
+    {
+
+      contractAddress: "",
+      standardContractType: "",
+      chain: "ethereum",
+      method: "",
+      parameters: [":userAddress"],
+      returnValueTest: {
+        comparator: "=",
+        value: fromAddr,
+      },
+    },
+  ];
+}
+
 export async function getLabelForThread(
   account: string,
   accessControlConditions: any
 ) {
   if (!accessControlConditions) {
-    return "BAD";
-  }
-
-  if (
-    accessControlConditions[0].contractAddress ==
-    "0xd7B3481De00995046C7850bCe9a5196B7605c367"
-  ) {
-    // Lens
-    const tokenId = accessControlConditions[0].parameters[0];
-    const profile = await getProfileRequest({
-      profileIds: [`0x0${parseInt(tokenId).toString(16)}`],
-    });
-    return profile.data.profiles.items[0].ownedBy.toLowerCase() ==
-      account.toLowerCase()
-      ? accessControlConditions[2].returnValueTest.value.slice(0, 10)
-      : profile.data.profiles.items[0].handle;
-  } else if (accessControlConditions[0].method == "ownerOf") {
     return "BAD";
   } else {
     // Wallet
@@ -158,6 +174,7 @@ export async function generateLitAuthSig(ethProvider: any): Promise<any> {
   });
   const provider = new ethers.providers.Web3Provider(ethProvider);
 
+  console.time('lith-auth-sig');
   let authSig = localStorage.getItem("lit-auth-signature");
   if (!authSig) {
     console.log("signing auth message because sig is not in local storage");
@@ -167,6 +184,7 @@ export async function generateLitAuthSig(ethProvider: any): Promise<any> {
     });
     authSig = localStorage.getItem("lit-auth-signature");
   }
+  console.timeEnd('lith-auth-sig');
 
   return JSON.parse(authSig || "{}");
 }

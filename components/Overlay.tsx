@@ -15,6 +15,7 @@ import {
   postToOutbox,
   generateWalletAccessControlConditions,
   generateLensAccessControlConditions,
+  generateSolAccessControlConditions,
   getProfileRequest,
 } from "../src/utils";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
@@ -29,13 +30,15 @@ export interface SimpleDialogProps {
   setOpen: any;
   isCreating: boolean;
   onWalletAddress: (value: string) => void;
+  onsolAddress: (value: string) => void;
   onLensHandle: (value: string) => void;
 }
 
 function SimpleDialog(props: SimpleDialogProps) {
-  const { onWalletAddress, onLensHandle, setOpen, isCreating, open } = props;
+  const { onWalletAddress, onLensHandle, onsolAddress, setOpen, isCreating, open } = props;
   const [walletAddress, setWalletAddress] = React.useState("");
   const [lensHandle, setLensHandle] = React.useState("");
+  const [solAddress, setsolAddress] = React.useState("");
 
   const handleWalletAddress = () => {
     onWalletAddress(walletAddress);
@@ -44,7 +47,9 @@ function SimpleDialog(props: SimpleDialogProps) {
   const handleLensHandle = () => {
     onLensHandle(lensHandle);
   };
-
+  const handlesolAddress = () => {
+    onsolAddress(solAddress);
+  };
   return (
     <Dialog open={open}>
       <DialogTitle>
@@ -96,6 +101,30 @@ function SimpleDialog(props: SimpleDialogProps) {
           </Button>
         </Grid>
       </Grid>
+
+      <Grid container style={{ padding: "20px" }} alignItems={"center"}>
+        <Grid item xs={9}>
+          <TextField
+            id="outlined-basic"
+            label="Sol Address"
+            variant="outlined"
+            onChange={(event) => {
+              setsolAddress(event.target.value);
+            }}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <Button
+            size="small"
+            variant="contained"
+            onClick={handlesolAddress}
+            disabled={isCreating}
+          >
+            Enter
+          </Button>
+        </Grid>
+      </Grid>
+
       <Grid container style={{ padding: "20px" }} alignItems={"center"}>
         <Grid item xs={12}>
           <Button
@@ -211,6 +240,17 @@ export default function Overlay({ reload }: { reload: any }) {
     await createThread(accessControlConditions, toAddr);
   };
 
+  const createThreadForSol = async (solAddress: string) => {
+    setCreating(true);
+
+    const unifiedAccessControlConditions = generateSolAccessControlConditions(
+      account!,
+      solAddress
+    );
+
+    await createThread(unifiedAccessControlConditions, solAddress);
+  };
+
   const createThreadForLens = async (lensHandle: string) => {
     setCreating(true);
 
@@ -257,6 +297,7 @@ export default function Overlay({ reload }: { reload: any }) {
         isCreating={isCreating}
         onWalletAddress={(value) => createThreadForWallet(value)}
         onLensHandle={(value) => createThreadForLens(value)}
+        onsolAddress={(value) => createThreadForSol(value)}
       />
     </div>
   );

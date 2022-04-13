@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.5.10",
-    "@cbj/ceramic-append-collection": "git+https://github.com/codynhat/ceramic-append-collection.git",
+    "@cbj/ceramic-append-collection": "^0.1.19",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
     "@ethersproject/providers": "^5.6.1",
@@ -24,7 +24,7 @@
     "@web3-react/injected-connector": "^6.0.7",
     "ethers": "^5.6.1",
     "graphql": "^16.3.0",
-    "lit-js-sdk": "^1.1.149",
+    "lit-js-sdk": "^1.1.156",
     "multiformats": "^9.6.4",
     "next": "12.1.0",
     "next-color-mode": "0.0.1",

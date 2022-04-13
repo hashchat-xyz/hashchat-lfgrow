@@ -250,9 +250,10 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@cbj/ceramic-append-collection@git+https://github.com/codynhat/ceramic-append-collection.git":
+"@cbj/ceramic-append-collection@^0.1.19":
   version "0.1.19"
-  resolved "git+https://github.com/codynhat/ceramic-append-collection.git#96cade076413f14e930a0cbaf43f2a123aafe582"
+  resolved "https://registry.yarnpkg.com/@cbj/ceramic-append-collection/-/ceramic-append-collection-0.1.19.tgz#44deecdaeb9fa73ee6bc4dadaf50af689a251107"
+  integrity sha512-EFY8OjsiO8OIa/x0Hq0K0ygc9Iade+tG1Zig+n4Xu1Sta8oSNMYmzgIN+3BYqajo5iPaSjhQdI4Qj0N240DCpg==
   dependencies:
     "@ceramicnetwork/stream-tile" "^1.3.0"
 
@@ -4770,10 +4771,10 @@ lit-connect-modal@^0.1.8:
   dependencies:
     micromodal "^0.4.10"
 
-lit-js-sdk@^1.1.149:
-  version "1.1.152"
-  resolved "https://registry.yarnpkg.com/lit-js-sdk/-/lit-js-sdk-1.1.152.tgz#1ceffb1cc378756f15142b4eb22641c5c0c3cce4"
-  integrity sha512-w4wlwtzMmmiNnH2bchggDCK1Px+LWeKCIYVx/b1GBQ0cAIxdr3Ju6g/FUBSA/xStwexETpVZhtkjGFdABxal4Q==
+lit-js-sdk@^1.1.156:
+  version "1.1.156"
+  resolved "https://registry.yarnpkg.com/lit-js-sdk/-/lit-js-sdk-1.1.156.tgz#26d6233048da74137700b652ad274a7444c9d13e"
+  integrity sha512-a68VVolSgsjzviG9dCo0K+YhTGxpARXx5wmhol+HNMyLxhgyBOsrGJACGzifFgSVthY2G2X9VSr1JYRxt9Q3AA==
   dependencies:
     "@ethersproject/abi" "^5.5.0"
     "@ethersproject/bytes" "^5.5.0"
