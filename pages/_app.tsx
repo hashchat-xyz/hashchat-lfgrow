@@ -58,7 +58,8 @@ function getLibrary(provider: any, connector: any) {
     await switchNetwork();
 
     const webClient = new WebClient({
-      ceramic: "testnet-clay",
+      ceramic: "https://ceramic-nodes.hashchat.xyz",
+      connectNetwork: "testnet-clay",
     });
     await webClient.authenticate(_provider);
 
