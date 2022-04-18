@@ -18,6 +18,7 @@ import {
   getInbox,
   getLabelForThread,
   getOutbox,
+  CHAIN,
 } from "../src/utils";
 import LitJsSdk from "lit-js-sdk";
 import { useWeb3React } from "@web3-react/core";
@@ -45,8 +46,46 @@ export function ThreadList({
       if (selfID != null && selfID.client != null && account) {
         const litNodeClient = new LitJsSdk.LitNodeClient();
 
-        await generateLitAuthSig(web3Provider.provider);
+        let authSig = await generateLitAuthSig(web3Provider.provider);
         await litNodeClient.connect();
+
+        const resourceId = {
+          baseUrl: "stream.hashchat.xyz",
+          path: "",
+          orgId: "",
+          role: "",
+          extraData: "",
+        };
+        const accessControlConditions = [
+          {
+            contractAddress: "",
+            standardContractType: "",
+            chain: CHAIN,
+            method: "",
+            parameters: [":userAddress"],
+            returnValueTest: {
+              comparator: "=",
+              value: account.toLowerCase(),
+            },
+          },
+        ];
+
+        try {
+          const jwt = await litNodeClient.getSignedToken({
+            accessControlConditions,
+            CHAIN,
+            authSig,
+            resourceId,
+          });
+          console.log("Lit JWT: " + jwt);
+        } catch {
+          await litNodeClient.saveSigningCondition({
+            accessControlConditions,
+            chain: CHAIN,
+            authSig,
+            resourceId,
+          });
+        }
 
         const _inbox = await getInbox(account);
         const _outbox = await getOutbox(account);
